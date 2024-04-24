@@ -22,7 +22,7 @@ export const permissions: Record<Role, PermissionsByRole> = {
     can(['get', 'create'], 'Project') // Pode gerenciar projetos
     can(['update', 'delete'], 'Project', { ownerId: { $eq: user.id } }) // Valida se o usuário é o dono do projeto
   },
-  BILLING(user, { can }) {
+  BILLING(_, { can }) {
     can('manage', 'Billing')
   },
 }
