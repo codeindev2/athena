@@ -3,15 +3,21 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/http/server.ts",
     "build": "tsc",
     "test": "jest"
   },
   "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@prisma/client": "^5.13.0",
+    "@saas/auth": "workspace:*",
     "@saas/eslint-config": "workspace:*",
     "@saas/prettier": "workspace:*",
     "@saas/tsconfig": "workspace:*",
-    "@saas/auth": "workspace:*"
+    "fastify": "^4.26.2",
+    "fastify-type-provider-zod": "^1.1.9",
+    "prisma": "^5.13.0",
+    "zod": "^3.23.4"
   },
   "prettier": "@saas/prettier",
   "eslintConfig": {
