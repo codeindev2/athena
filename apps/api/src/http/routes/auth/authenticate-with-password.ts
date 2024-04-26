@@ -10,12 +10,20 @@ export async function authenticateWithPassword(app: FastifyInstance) {
     '/sessions/password',
     {
       schema: {
-        tags: ['auth'],
+        tags: ['Auth'],
         summary: 'Authenticate with e-mail and password',
         body: z.object({
           email: z.string().email(),
           password: z.string(),
         }),
+        response: {
+          201: z.object({
+            token: z.string(),
+          }),
+          400: z.object({
+            message: z.string(),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -28,13 +36,13 @@ export async function authenticateWithPassword(app: FastifyInstance) {
       })
 
       if (!userFromEmail) {
-        return reply.send({
+        return reply.status(400).send({
           message: 'Invalid credentials',
         })
       }
 
       if (userFromEmail.passwordHash === null) {
-        return reply.send({
+        return reply.status(400).send({
           message: 'User does not have a password, use social login',
         })
       }
@@ -45,7 +53,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
       )
 
       if (!isPasswordCorrect) {
-        return reply.send({
+        return reply.status(400).send({
           message: 'Invalid credentials',
         })
       }

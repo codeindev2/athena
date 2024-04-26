@@ -1,4 +1,5 @@
 @baseUrl = http://localhost:3333
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NzZlNzYwNi1iMzgyLTQ0YTktYmMzMC1hNjA3NjhmYTgxZDAiLCJpYXQiOjE3MTQwOTIwNDgsImV4cCI6MTcxNDY5Njg0OH0.8VfJAfbofO-zuKnYW3NXr1Db2ufaK_A9atY2LgwWcPs
 
 ###  Users
 POST {{baseUrl}}/users HTTP/1.1
@@ -18,4 +19,9 @@ content-type: application/json
     "email": "john@acme.com",
     "password": "123456"
 }
+
+### Get profile
+GET {{baseUrl}}/profile HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{ token }}
 
