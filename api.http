@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3333
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlOTgzNGE3MC02N2ZmLTQ5ZmYtOWI3MC1iMDlhNTZmNzI2OWUiLCJpYXQiOjE3MTQwOTM3MzEsImV4cCI6MTcxNDY5ODUzMX0.Pj4WwIj4H3AdvDkcIa4B56uwfEjuj6KW4RAhpvwv9zU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlOTgzNGE3MC02N2ZmLTQ5ZmYtOWI3MC1iMDlhNTZmNzI2OWUiLCJpYXQiOjE3MTQwOTQ1MDcsImV4cCI6MTcxNDY5OTMwN30.AK8FnqkMo8lGMTstl4FUhU-QHEFkzjBvttYaIGg80MA
 ###  Users
 POST {{baseUrl}}/users HTTP/1.1
 content-type: application/json
@@ -16,11 +16,28 @@ content-type: application/json
 
 {
     "email": "wilson@sample.com",
-    "password": "123456"
+    "password": "261456"
 }
 
 ### Get profile
 GET {{baseUrl}}/profile HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{ token }}
+
+### Password recover
+POST {{baseUrl}}/password/recover HTTP/1.1
+content-type: application/json
+
+{
+    "email": "wilson@sample.com"
+}
+
+### Reset password
+POST {{baseUrl}}/password/reset HTTP/1.1
+content-type: application/json
+
+{
+    "code": "70f2a2b7-eb8c-46a2-ab58-b2c59271922d",
+    "password": "261456"
+}
 
