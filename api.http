@@ -1,12 +1,21 @@
 @baseUrl = http://localhost:3333
 
-## Users
+###  Users
 POST {{baseUrl}}/users HTTP/1.1
 content-type: application/json
 
 {
     "name": "Wilson",
     "email": "wilson@sample.com",
+    "password": "123456"
+}
+### Authenticate with password
+
+POST {{baseUrl}}/sessions/password HTTP/1.1
+content-type: application/json
+
+{
+    "email": "john@acme.com",
     "password": "123456"
 }
 
