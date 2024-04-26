@@ -31,6 +31,7 @@ export async function requestPasswordRecover(app: FastifyInstance) {
         return reply.status(201).send()
       }
 
+      // Criar token de recuperação de senha e salvar no banco de dados
       const { id: code } = await prisma.token.create({
         data: {
           type: 'PASSWORD_RECOVER',
@@ -39,7 +40,8 @@ export async function requestPasswordRecover(app: FastifyInstance) {
       })
 
       // Send e-mail with password recover link
-
+      // Adicionar fila para enviar email com link de recuperação de senha
+      // ID tabela tokené o código de recuperação de senha
       console.log('Password recover token:', code)
 
       return reply.status(201).send()
