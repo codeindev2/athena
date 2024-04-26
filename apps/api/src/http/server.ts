@@ -21,10 +21,12 @@ import { resetPassword } from './routes/auth/reset-password'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
+// Serializador e Validador
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 app.setErrorHandler(errorHandler)
 
+// Configuração do Swagger
 app.register(fastifySwagger, {
   openapi: {
     info: {
@@ -45,14 +47,20 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
+// Swagger UI
 app.register(fastifySwaggerUi, {
   routePrefix: '/docs',
 })
 
+// Cors
 app.register(fastifyCors)
+
+// JWT
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
 })
+
+// Rotas
 app.register(createAccount)
 app.register(authenticateWithPassword)
 app.register(authenticateWithGithub)
@@ -60,6 +68,7 @@ app.register(getProfile)
 app.register(requestPasswordRecover)
 app.register(resetPassword)
 
+// Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {
   console.log('HTTP server running!')
 })
