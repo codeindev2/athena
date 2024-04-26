@@ -1,6 +1,5 @@
 @baseUrl = http://localhost:3333
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NzZlNzYwNi1iMzgyLTQ0YTktYmMzMC1hNjA3NjhmYTgxZDAiLCJpYXQiOjE3MTQwOTIwNDgsImV4cCI6MTcxNDY5Njg0OH0.8VfJAfbofO-zuKnYW3NXr1Db2ufaK_A9atY2LgwWcPs
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NzZlNzYwNi1iMzgyLTQ0YTktYmMzMC1hNjA3NjhmYTgxZDAiLCJpYXQiOjE3MTQwOTMwMjIsImV4cCI6MTcxNDY5NzgyMn0.uMG1G7xNp9ahucUTP8BNzwJvyFjVppFiSqPUpzjB4jY
 ###  Users
 POST {{baseUrl}}/users HTTP/1.1
 content-type: application/json
