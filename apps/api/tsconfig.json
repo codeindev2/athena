@@ -1,6 +1,7 @@
 {
   "extends": "@saas/tsconfig/node.json",
-  "include": ["src/**/*", "../../packages/auth/src/models"],
+  "include": ["src/**/*", "@types/*.d.ts",  "../../packages/auth/src/models"],
+
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",

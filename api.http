@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3333
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NzZlNzYwNi1iMzgyLTQ0YTktYmMzMC1hNjA3NjhmYTgxZDAiLCJpYXQiOjE3MTQwOTMwMjIsImV4cCI6MTcxNDY5NzgyMn0.uMG1G7xNp9ahucUTP8BNzwJvyFjVppFiSqPUpzjB4jY
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlOTgzNGE3MC02N2ZmLTQ5ZmYtOWI3MC1iMDlhNTZmNzI2OWUiLCJpYXQiOjE3MTQwOTM3MzEsImV4cCI6MTcxNDY5ODUzMX0.Pj4WwIj4H3AdvDkcIa4B56uwfEjuj6KW4RAhpvwv9zU
 ###  Users
 POST {{baseUrl}}/users HTTP/1.1
 content-type: application/json
@@ -15,7 +15,7 @@ POST {{baseUrl}}/sessions/password HTTP/1.1
 content-type: application/json
 
 {
-    "email": "john@acme.com",
+    "email": "wilson@sample.com",
     "password": "123456"
 }
 
