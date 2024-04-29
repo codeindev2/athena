@@ -19,8 +19,7 @@ model User {
   tokens             Token[]
   accounts           Account[]
   owns_organizations Organization[]
-  employees          Employee[]
-  clients            Client[]
+  members            Member[]
   schedules          Schedule[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -66,7 +65,7 @@ enum Role {
   BILLING
 }
 
-model Client {
+model Member {
   id             String       @id @default(uuid())
   role           Role         @default(CLIENT)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -79,22 +78,7 @@ model Client {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([organizationId, userId])
-  @@map("clients")
-}
-
-model Employee {
-  id             String       @id @default(uuid())
-  role           Role         @default(EMPLOYEE)
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String       @map("organization_id")
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String       @map("user_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([organizationId, userId])
-  @@map("employees")
+  @@map("members")
 }
 
 model Organization {
@@ -106,11 +90,10 @@ model Organization {
   avatarUrl                 String?    @map("avatar_url")
   owner                     User       @relation(fields: [ownerId], references: [id])
   ownerId                   String     @map("owner_id")
-  clients                   Client[]
+  members                   Member[]
   products                  Product[]
   services                  Service[]
-  employees                 Employee[]
-  Schedule                  Schedule[]
+  schedules                 Schedule[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -157,8 +140,8 @@ model Service {
 model Schedule {
   id             String       @id @default(uuid())
   observations   String       @db.VarChar(500)
-  client         Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  clientId       String       @map("client_id")
+  member         Member       @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId       String       @map("member_id")
   service        Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceId      String       @map("service_id")
   owner          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
