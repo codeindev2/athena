@@ -11,16 +11,20 @@ model User {
   id                 String         @id @default(uuid())
   name               String?
   email              String         @unique
+  phone              String?
+  address            String?
   passwordHash       String?        @map("password_hash")
+  active             Boolean?       @default(true)
   avatarUrl          String?        @map("avatar_url")
-  createdAt          DateTime       @default(now()) @map("created_at")
-  updatedAt          DateTime       @updatedAt @map("updated_at")
   tokens             Token[]
   accounts           Account[]
-  invites            Invite[]
-  member_on          Member[]
   owns_organizations Organization[]
-  owns_projects      Project[]
+  employees          Employee[]
+  clients            Client[]
+  schedules          Schedule[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -30,11 +34,12 @@ enum TokenType {
 }
 
 model Token {
-  id        String    @id @default(uuid())
-  type      TokenType
-  createdAt DateTime  @default(now()) @map("created_at")
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String    @map("user_id")
+  id     String    @id @default(uuid())
+  type   TokenType
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String    @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("tokens")
 }
@@ -56,67 +61,113 @@ model Account {
 
 enum Role {
   ADMIN
-  MEMBER
+  EMPLOYEE
+  CLIENT
   BILLING
 }
 
-model Invite {
+model Client {
   id             String       @id @default(uuid())
-  email          String
-  role           Role
-  createdAt      DateTime     @default(now()) @map("created_at")
-  author         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userId         String?      @map("user_id")
+  role           Role         @default(CLIENT)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String       @map("organization_id")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String       @map("user_id")
+  schedules      Schedule[]
 
-  @@unique([email, organizationId])
-  @@index([email])
-  @@map("invites")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([organizationId, userId])
+  @@map("clients")
 }
 
-model Member {
+model Employee {
   id             String       @id @default(uuid())
-  role           Role         @default(MEMBER)
+  role           Role         @default(EMPLOYEE)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String       @map("organization_id")
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String       @map("user_id")
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@unique([organizationId, userId])
-  @@map("members")
+  @@map("employees")
 }
 
 model Organization {
-  id                        String    @id @default(uuid())
+  id                        String     @id @default(uuid())
   name                      String
-  slug                      String    @unique
-  domain                    String?   @unique
-  shouldAttachUsersByDomain Boolean   @default(false) @map("should_attach_users_by_domain")
-  avatarUrl                 String?   @map("avatar_url")
-  createdAt                 DateTime  @default(now()) @map("created_at")
-  updatedAt                 DateTime  @updatedAt @map("updated_at")
-  owner                     User      @relation(fields: [ownerId], references: [id])
-  ownerId                   String    @map("owner_id")
-  invites                   Invite[]
-  members                   Member[]
-  projects                  Project[]
+  slug                      String     @unique
+  domain                    String?    @unique
+  shouldAttachUsersByDomain Boolean    @default(false) @map("should_attach_users_by_domain")
+  avatarUrl                 String?    @map("avatar_url")
+  owner                     User       @relation(fields: [ownerId], references: [id])
+  ownerId                   String     @map("owner_id")
+  clients                   Client[]
+  products                  Product[]
+  services                  Service[]
+  employees                 Employee[]
+  Schedule                  Schedule[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("organizations")
 }
 
-model Project {
-  id             String       @id @default(uuid())
+model Product {
+  id             String         @id @default(uuid())
   name           String
   description    String
-  slug           String       @unique
-  avatarUrl      String?      @map("avatar_url")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String         @map("organization_id")
+  images         ProductImage[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([organizationId, name])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  url       String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @map("product_id")
+
+  @@map("product_images")
+}
+
+model Service {
+  id             String       @id @default(uuid())
+  name           String
+  description    String       @db.VarChar(500)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String       @map("organization_id")
-  owner          User         @relation(fields: [ownerId], references: [id])
-  ownerId        String       @map("owner_id")
+  schedules      Schedule[]
 
-  @@map("projects")
+  @@unique([organizationId, name])
+  @@map("services")
+}
+
+model Schedule {
+  id             String       @id @default(uuid())
+  observations   String       @db.VarChar(500)
+  client         Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId       String       @map("client_id")
+  service        Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId      String       @map("service_id")
+  owner          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        String       @map("user_id")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String       @map("organization_id")
+  date           DateTime
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  @@map("schedules")
 }

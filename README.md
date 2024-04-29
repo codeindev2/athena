@@ -1,4 +1,4 @@
-# Next.js SaaS + RBAC
+# athenasis + RBAC
 
 This project contains all the necessary boilerplate to setup a multi-tenant SaaS with Next.js including authentication and RBAC authorization.
 
@@ -19,18 +19,14 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 - [ ] It should be able to shutdown an organization;
 - [ ] It should be able to transfer organization ownership;
 
-### Invites
 
-- [ ] It should be able to invite a new member (e-mail, role);
-- [ ] It should be able to accept an invite;
-- [ ] It should be able to revoke a pending invite;
 
-### Members
+### Clients
 
-- [ ] It should be able to get organization members;
+- [ ] It should be able to get organization clients;
 - [ ] It should be able to update a member role;
 
-### Projects
+### Products
 
 - [ ] It should be able to get projects within a organization;
 - [ ] It should be able to create a new project (name, url, description);

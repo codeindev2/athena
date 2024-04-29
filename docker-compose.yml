@@ -3,12 +3,12 @@ services:
   pg:
     image: bitnami/postgresql
     ports:
-      - '5432:5432'
+      - '5433:5432'
     restart: always
     environment:
       - POSTGRES_PASSWORD=docker
       - POSTGRES_USER=docker
-      - POSTGRES_DB=next-saas
+      - POSTGRES_DB=athena
     volumes:
       - ./data:/var/lib/postgresql/data
 
