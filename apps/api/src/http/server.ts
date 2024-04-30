@@ -23,7 +23,6 @@ import { getBusiness } from './routes/business/get-business'
 import { getBusinessAll } from './routes/business/get-business-all'
 import { getMembership } from './routes/business/get-membership'
 import { shutdownBusiness } from './routes/business/shutdown-business'
-import { transferBusiness } from './routes/business/transfer-business'
 import { updateBusiness } from './routes/business/update-business'
 import { createProduct } from './routes/products/create-product'
 import { deleteProduct } from './routes/products/delete-product'
@@ -87,7 +86,6 @@ app.register(getBusiness)
 app.register(getBusinessAll)
 app.register(updateBusiness)
 app.register(shutdownBusiness)
-// app.register(transferBusiness)
 
 // Produtos
 app.register(createProduct)
