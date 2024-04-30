@@ -1,12 +1,13 @@
 import { AbilityBuilder } from '@casl/ability'
 
-import { AppAbility } from '.'
+import { AppAbility, Business } from '.'
 import { Role } from './models/roles'
 import { User } from './models/user'
 
 type PermissionsByRole = (
   user: User,
   builder: AbilityBuilder<AppAbility>,
+  business?: Business,
 ) => void
 
 export const permissions: Record<Role, PermissionsByRole> = {

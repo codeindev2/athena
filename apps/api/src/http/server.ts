@@ -29,6 +29,11 @@ import { deleteProduct } from './routes/products/delete-product'
 import { getProduct } from './routes/products/get-product'
 import { getProducts } from './routes/products/get-products'
 import { updateProduct } from './routes/products/update-product'
+import { createService } from './routes/service/create-service'
+import { deleteService } from './routes/service/delete-service'
+import { getService } from './routes/service/get-service'
+import { getServices } from './routes/service/get-services'
+import { updateService } from './routes/service/update-service'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -93,6 +98,13 @@ app.register(deleteProduct)
 app.register(getProduct)
 app.register(getProducts)
 app.register(updateProduct)
+
+// Serviços
+app.register(createService)
+app.register(getService)
+app.register(getServices)
+app.register(updateService)
+app.register(deleteService)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {

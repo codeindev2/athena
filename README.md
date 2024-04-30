@@ -13,11 +13,11 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 
 ### Business
 
-- [ ] It should be able to create a new business;
-- [ ] It should be able to get business to which the user belongs;
-- [ ] It should be able to update an business;
-- [ ] It should be able to shutdown an business;
-- [ ] It should be able to transfer business ownership;
+- [x] It should be able to create a new business;
+- [x] It should be able to get business to which the user belongs;
+- [x] It should be able to update an business;
+- [x] It should be able to shutdown an business;
+- [x] It should be able to transfer business ownership;
 
 
 
@@ -28,11 +28,24 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 
 ### Products
 
-- [ ] It should be able to get projects within a business;
-- [ ] It should be able to create a new project (name, url, description);
-- [ ] It should be able to update a project (name, url, description);
-- [ ] It should be able to delete a project;
+- [x] It should be able to get products within a business;
+- [x] It should be able to create a new product (name, url, description);
+- [x] It should be able to update a product (name, url, description);
+- [x] It should be able to delete a product;
 
+### Services
+
+- [ ] It should be able to get services within a business;
+- [ ] It should be able to create a new service (name, url, description);
+- [ ] It should be able to update a service (name, url, description);
+- [ ] It should be able to delete a service;
+
+### Schedules
+
+- [ ] It should be able to get schedules within a business and member;
+- [ ] It should be able to create a new schedule (name, url, description);
+- [ ] It should be able to update a schedule (name, url, description);
+- [ ] It should be able to delete a schedule;
 ### Billing
 
 - [ ] It should be able to get billing details for business ($20 per project / $10 per member excluding billing role);
