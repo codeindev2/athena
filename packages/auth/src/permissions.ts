@@ -12,8 +12,8 @@ type PermissionsByRole = (
 export const permissions: Record<Role, PermissionsByRole> = {
   ADMIN(user, { can, cannot }) {
     can('manage', 'all') // Pode gerenciar todos os recursos
-    cannot(['transfer_ownership', 'update'], 'Organization') // Primeiro tirar a possibilidade de transferir a propriedade da organização
-    can(['transfer_ownership', 'update'], 'Organization', {
+    cannot(['transfer_ownership', 'update'], 'Business') // Primeiro tirar a possibilidade de transferir a propriedade da organização
+    can(['transfer_ownership', 'update'], 'Business', {
       ownerId: { $eq: user.id },
     }) // Depois dar permissão para transferir organizacao que pertence ao usuário
   },

@@ -14,7 +14,7 @@ export async function deleteProduct(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .delete(
-      '/organizations/:slug/product/:productId',
+      '/business/:slug/product/:productId',
       {
         schema: {
           tags: ['Products'],
@@ -32,13 +32,12 @@ export async function deleteProduct(app: FastifyInstance) {
       async (request, reply) => {
         const { slug, productId } = request.params
         const userId = await request.getCurrentUserId()
-        const { organization, membership } =
-          await request.getUserMembership(slug)
+        const { business, membership } = await request.getUserMembership(slug)
 
         const product = await prisma.product.findUnique({
           where: {
             id: productId,
-            organizationId: organization.id,
+            businessId: business.id,
           },
         })
 

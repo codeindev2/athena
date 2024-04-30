@@ -6,36 +6,36 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 
 ### Authentication
 
-- [ ] It should be able to authenticate using e-mail & password;
-- [ ] It should be able to authenticate using Github account;
-- [ ] It should be able to recover password using e-mail;
-- [ ] It should be able to create an account (e-mail, name and password);
+- [x] It should be able to authenticate using e-mail & password;
+- [x] It should be able to authenticate using Github account;
+- [x] It should be able to recover password using e-mail;
+- [x] It should be able to create an account (e-mail, name and password);
 
-### Organizations
+### Business
 
-- [ ] It should be able to create a new organization;
-- [ ] It should be able to get organizations to which the user belongs;
-- [ ] It should be able to update an organization;
-- [ ] It should be able to shutdown an organization;
-- [ ] It should be able to transfer organization ownership;
+- [ ] It should be able to create a new business;
+- [ ] It should be able to get business to which the user belongs;
+- [ ] It should be able to update an business;
+- [ ] It should be able to shutdown an business;
+- [ ] It should be able to transfer business ownership;
 
 
 
 ### Clients
 
-- [ ] It should be able to get organization clients;
+- [ ] It should be able to get business clients;
 - [ ] It should be able to update a member role;
 
 ### Products
 
-- [ ] It should be able to get projects within a organization;
+- [ ] It should be able to get projects within a business;
 - [ ] It should be able to create a new project (name, url, description);
 - [ ] It should be able to update a project (name, url, description);
 - [ ] It should be able to delete a project;
 
 ### Billing
 
-- [ ] It should be able to get billing details for organization ($20 per project / $10 per member excluding billing role);
+- [ ] It should be able to get billing details for business ($20 per project / $10 per member excluding billing role);
 
 ## RBAC
 
@@ -46,15 +46,15 @@ Roles & permissions.
 - Owner (count as administrator)
 - Administrator
 - Member
-- Billing (one per organization)
+- Billing (one per business)
 - Anonymous
 
 ### Permissions table
 
 |                          | Administrator | Member | Billing | Anonymous |
 | ------------------------ | ------------- | ------ | ------- | --------- |
-| Update organization      | ✅            | ❌     | ❌      | ❌        |
-| Delete organization      | ✅            | ❌     | ❌      | ❌        |
+| Update business      | ✅            | ❌     | ❌      | ❌        |
+| Delete business      | ✅            | ❌     | ❌      | ❌        |
 | Invite a member          | ✅            | ❌     | ❌      | ❌        |
 | Revoke an invite         | ✅            | ❌     | ❌      | ❌        |
 | List members             | ✅            | ✅     | ✅      | ❌        |
@@ -74,6 +74,6 @@ Roles & permissions.
 
 #### Conditions
 
-- Only owners may transfer organization ownership;
+- Only owners may transfer business ownership;
 - Only administrators and project authors may update/delete the project;
-- Members can leave their own organization;
+- Members can leave their own business;

@@ -4,23 +4,23 @@ import { z } from 'zod'
 
 import { auth } from '@/http/middlewares/auth'
 
-export async function getOrganization(app: FastifyInstance) {
+export async function getBusiness(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .get(
-      '/organization/:slug',
+      '/business/:slug',
       {
         schema: {
-          tags: ['Organizations'],
-          summary: 'Get details from organization',
+          tags: ['Business'],
+          summary: 'Get details from business',
           security: [{ bearerAuth: [] }],
           params: z.object({
             slug: z.string(),
           }),
           response: {
             200: z.object({
-              organization: z.object({
+              business: z.object({
                 id: z.string().uuid(),
                 name: z.string(),
                 slug: z.string(),
@@ -38,9 +38,9 @@ export async function getOrganization(app: FastifyInstance) {
       async (request) => {
         const { slug } = request.params
 
-        const { organization } = await request.getUserMembership(slug)
+        const { business } = await request.getUserMembership(slug)
 
-        return { organization }
+        return { business }
       },
     )
 }

@@ -1,4 +1,4 @@
-import { organizationSchema } from '@saas/auth'
+import { businessSchema } from '@saas/auth'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -10,16 +10,16 @@ import { getUserPermissions } from '@/utils/get-user-permissions'
 import { BadRequestError } from '../_error/bad-request'
 import { UnauthorizedError } from '../_error/unauthorization'
 
-export async function updateOrganization(app: FastifyInstance) {
+export async function updateBusiness(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .put(
-      '/organizations/:slug',
+      '/business/:slug',
       {
         schema: {
-          tags: ['Organizations'],
-          summary: 'Update organization details',
+          tags: ['Business'],
+          summary: 'Update business details',
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
@@ -37,44 +37,43 @@ export async function updateOrganization(app: FastifyInstance) {
       async (request, reply) => {
         const { slug } = request.params
         const userId = await request.getCurrentUserId()
-        const { membership, organization } =
-          await request.getUserMembership(slug)
+        const { membership, business } = await request.getUserMembership(slug)
 
         const { name, domain, shouldAttachUsersByDomain } = request.body
 
         // Para pegar os dados da organização
-        const authOrganization = organizationSchema.parse(organization)
+        const authBusiness = businessSchema.parse(business)
 
         // Verifica se o usuário pode editar a organização
         const { cannot } = getUserPermissions(userId, membership.role)
 
         // Se o usuário não puder editar a organização, lança um erro
-        if (cannot('update', authOrganization)) {
+        if (cannot('update', authBusiness)) {
           throw new UnauthorizedError(
-            `You're not allowed to update this organization.`,
+            `You're not allowed to update this business.`,
           )
         }
 
         if (domain) {
-          const organizationByDomain = await prisma.organization.findFirst({
+          const businessByDomain = await prisma.business.findFirst({
             where: {
               domain,
               id: {
-                not: organization.id,
+                not: business.id,
               },
             },
           })
 
-          if (organizationByDomain) {
+          if (businessByDomain) {
             throw new BadRequestError(
-              'Another organization with same domain already exists.',
+              'Another business with same domain already exists.',
             )
           }
         }
 
-        await prisma.organization.update({
+        await prisma.business.update({
           where: {
-            id: organization.id,
+            id: business.id,
           },
           data: {
             name,

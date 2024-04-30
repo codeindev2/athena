@@ -8,13 +8,13 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "clients" DROP CONSTRAINT "clients_organization_id_fkey";
+ALTER TABLE "clients" DROP CONSTRAINT "clients_business_id_fkey";
 
 -- DropForeignKey
 ALTER TABLE "clients" DROP CONSTRAINT "clients_user_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "employees" DROP CONSTRAINT "employees_organization_id_fkey";
+ALTER TABLE "employees" DROP CONSTRAINT "employees_business_id_fkey";
 
 -- DropForeignKey
 ALTER TABLE "employees" DROP CONSTRAINT "employees_user_id_fkey";
@@ -36,7 +36,7 @@ DROP TABLE "employees";
 CREATE TABLE "members" (
     "id" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'CLIENT',
-    "organization_id" TEXT NOT NULL,
+    "business_id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -45,10 +45,10 @@ CREATE TABLE "members" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "members_organization_id_user_id_key" ON "members"("organization_id", "user_id");
+CREATE UNIQUE INDEX "members_business_id_user_id_key" ON "members"("business_id", "user_id");
 
 -- AddForeignKey
-ALTER TABLE "members" ADD CONSTRAINT "members_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "members" ADD CONSTRAINT "members_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "business"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "members" ADD CONSTRAINT "members_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

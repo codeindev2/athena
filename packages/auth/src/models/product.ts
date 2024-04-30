@@ -6,7 +6,7 @@ export const productSchema = z.object({
   name: z.string(),
   description: z.string(),
   price: z.number(),
-  organizationId: z.string(),
+  businessId: z.string(),
 })
 
 export type Product = z.infer<typeof productSchema>

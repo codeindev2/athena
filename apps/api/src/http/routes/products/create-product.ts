@@ -13,7 +13,7 @@ export async function createProduct(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .post(
-      '/organizations/:slug/product',
+      '/business/:slug/product',
       {
         schema: {
           tags: ['Products'],
@@ -39,8 +39,7 @@ export async function createProduct(app: FastifyInstance) {
         const { slug } = request.params
         // Inicia verificação de permissões
         const userId = await request.getCurrentUserId()
-        const { organization, membership } =
-          await request.getUserMembership(slug)
+        const { business, membership } = await request.getUserMembership(slug)
 
         const { cannot } = getUserPermissions(userId, membership.role)
 
@@ -57,7 +56,7 @@ export async function createProduct(app: FastifyInstance) {
           data: {
             name,
             description,
-            organizationId: organization.id,
+            businessId: business.id,
             price,
           },
         })

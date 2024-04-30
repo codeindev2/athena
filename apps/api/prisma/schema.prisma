@@ -8,19 +8,19 @@ datasource db {
 }
 
 model User {
-  id                 String         @id @default(uuid())
-  name               String?
-  email              String         @unique
-  phone              String?
-  address            String?
-  passwordHash       String?        @map("password_hash")
-  active             Boolean?       @default(true)
-  avatarUrl          String?        @map("avatar_url")
-  tokens             Token[]
-  accounts           Account[]
-  owns_organizations Organization[]
-  members            Member[]
-  schedules          Schedule[]
+  id            String     @id @default(uuid())
+  name          String?
+  email         String     @unique
+  phone         String?
+  address       String?
+  passwordHash  String?    @map("password_hash")
+  active        Boolean?   @default(true)
+  avatarUrl     String?    @map("avatar_url")
+  tokens        Token[]
+  accounts      Account[]
+  owns_business Business[]
+  members       Member[]
+  schedules     Schedule[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -66,22 +66,22 @@ enum Role {
 }
 
 model Member {
-  id             String       @id @default(uuid())
-  role           Role         @default(CLIENT)
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String       @map("organization_id")
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String       @map("user_id")
-  schedules      Schedule[]
+  id         String     @id @default(uuid())
+  role       Role       @default(CLIENT)
+  business   Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String     @map("business_id")
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String     @map("user_id")
+  schedules  Schedule[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([organizationId, userId])
+  @@unique([businessId, userId])
   @@map("members")
 }
 
-model Organization {
+model Business {
   id                        String     @id @default(uuid())
   name                      String
   slug                      String     @unique
@@ -98,22 +98,22 @@ model Organization {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("organizations")
+  @@map("business")
 }
 
 model Product {
-  id             String         @id @default(uuid())
-  name           String
-  description    String
-  price          Decimal        @db.Decimal(10, 2)
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String         @map("organization_id")
-  images         ProductImage[]
+  id          String         @id @default(uuid())
+  name        String
+  description String
+  price       Decimal        @db.Decimal(10, 2)
+  business    Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId  String         @map("business_id")
+  images      ProductImage[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([organizationId, name])
+  @@unique([businessId, name])
   @@map("products")
 }
 
@@ -127,31 +127,31 @@ model ProductImage {
 }
 
 model Service {
-  id             String       @id @default(uuid())
-  name           String
-  description    String       @db.VarChar(500)
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String       @map("organization_id")
-  schedules      Schedule[]
+  id          String     @id @default(uuid())
+  name        String
+  description String     @db.VarChar(500)
+  business    Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId  String     @map("business_id")
+  schedules   Schedule[]
 
-  @@unique([organizationId, name])
+  @@unique([businessId, name])
   @@map("services")
 }
 
 model Schedule {
-  id             String       @id @default(uuid())
-  observations   String       @db.VarChar(500)
-  member         Member       @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  memberId       String       @map("member_id")
-  service        Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  serviceId      String       @map("service_id")
-  owner          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId        String       @map("user_id")
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String       @map("organization_id")
-  date           DateTime
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  observations String   @db.VarChar(500)
+  member       Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId     String   @map("member_id")
+  service      Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId    String   @map("service_id")
+  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId      String   @map("user_id")
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId   String   @map("business_id")
+  date         DateTime
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@map("schedules")
 }

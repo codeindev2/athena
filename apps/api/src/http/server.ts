@@ -18,13 +18,13 @@ import { createAccount } from './routes/auth/create-account'
 import { getProfile } from './routes/auth/get-profile'
 import { requestPasswordRecover } from './routes/auth/request-password-recover'
 import { resetPassword } from './routes/auth/reset-password'
-import { createOrganization } from './routes/organization/create-organization'
-import { getMembership } from './routes/organization/get-membership'
-import { getOrganization } from './routes/organization/get-organization'
-import { getOrganizations } from './routes/organization/get-organizations'
-import { shutdownOrganization } from './routes/organization/shutdown-organization'
-import { transferOrganization } from './routes/organization/transfer-organization'
-import { updateOrganization } from './routes/organization/update-organization'
+import { createBusiness } from './routes/business/create-business'
+import { getBusiness } from './routes/business/get-business'
+import { getBusinessAll } from './routes/business/get-business-all'
+import { getMembership } from './routes/business/get-membership'
+import { shutdownBusiness } from './routes/business/shutdown-business'
+import { transferBusiness } from './routes/business/transfer-business'
+import { updateBusiness } from './routes/business/update-business'
 import { createProduct } from './routes/products/create-product'
 import { deleteProduct } from './routes/products/delete-product'
 import { getProduct } from './routes/products/get-product'
@@ -81,13 +81,13 @@ app.register(requestPasswordRecover)
 app.register(resetPassword)
 
 // Organizações
-app.register(createOrganization)
+app.register(createBusiness)
 app.register(getMembership)
-app.register(getOrganization)
-app.register(getOrganizations)
-app.register(updateOrganization)
-app.register(shutdownOrganization)
-app.register(transferOrganization)
+app.register(getBusiness)
+app.register(getBusinessAll)
+app.register(updateBusiness)
+app.register(shutdownBusiness)
+// app.register(transferBusiness)
 
 // Produtos
 app.register(createProduct)

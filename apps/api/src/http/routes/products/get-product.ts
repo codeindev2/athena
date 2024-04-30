@@ -14,7 +14,7 @@ export async function getProduct(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .get(
-      '/organizations/:orgSlug/product/:productSlug',
+      '/business/:orgSlug/product/:productSlug',
       {
         schema: {
           tags: ['Products'],
@@ -30,8 +30,8 @@ export async function getProduct(app: FastifyInstance) {
                 id: z.string().uuid(),
                 name: z.string(),
                 description: z.string(),
-                organizationId: z.string().uuid(),
-                organization: z.object({
+                businessId: z.string().uuid(),
+                business: z.object({
                   id: z.string().uuid(),
                   name: z.string().nullable(),
                   avatarUrl: z.string().nullable(),
@@ -44,7 +44,7 @@ export async function getProduct(app: FastifyInstance) {
       async (request, reply) => {
         const { orgSlug, productSlug } = request.params
         const userId = await request.getCurrentUserId()
-        const { organization, membership } =
+        const { business, membership } =
           await request.getUserMembership(orgSlug)
 
         const { cannot } = getUserPermissions(userId, membership.role)
@@ -61,8 +61,8 @@ export async function getProduct(app: FastifyInstance) {
             name: true,
             description: true,
             price: true,
-            organizationId: true,
-            organization: {
+            businessId: true,
+            business: {
               select: {
                 id: true,
                 name: true,
@@ -72,7 +72,7 @@ export async function getProduct(app: FastifyInstance) {
           },
           where: {
             id: productSlug,
-            organizationId: organization.id,
+            businessId: business.id,
           },
         })
 

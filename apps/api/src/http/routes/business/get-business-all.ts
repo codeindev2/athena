@@ -6,20 +6,20 @@ import { z } from 'zod'
 import { auth } from '@/http/middlewares/auth'
 import { prisma } from '@/lib/prisma'
 
-export async function getOrganizations(app: FastifyInstance) {
+export async function getBusinessAll(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .get(
-      '/organizations',
+      '/business',
       {
         schema: {
-          tags: ['Organizations'],
-          summary: 'Get organizations where user is a member',
+          tags: ['Business'],
+          summary: 'Get business where user is a member',
           security: [{ bearerAuth: [] }],
           response: {
             200: z.object({
-              organizations: z.array(
+              business: z.array(
                 z.object({
                   id: z.string().uuid(),
                   name: z.string(),
@@ -35,7 +35,7 @@ export async function getOrganizations(app: FastifyInstance) {
       async (request) => {
         const userId = await request.getCurrentUserId()
 
-        const organizations = await prisma.organization.findMany({
+        const business = await prisma.business.findMany({
           select: {
             id: true,
             name: true,
@@ -59,16 +59,14 @@ export async function getOrganizations(app: FastifyInstance) {
           },
         })
 
-        const organizationsWithUserRole = organizations.map(
-          ({ members, ...org }) => {
-            return {
-              ...org,
-              role: members[0].role,
-            }
-          },
-        )
+        const businessWithUserRole = business.map(({ members, ...org }) => {
+          return {
+            ...org,
+            role: members[0].role,
+          }
+        })
 
-        return { organizations: organizationsWithUserRole }
+        return { business: businessWithUserRole }
       },
     )
 }

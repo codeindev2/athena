@@ -1,4 +1,4 @@
-import { organizationSchema } from '@saas/auth'
+import { businessSchema } from '@saas/auth'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -9,16 +9,16 @@ import { getUserPermissions } from '@/utils/get-user-permissions'
 
 import { UnauthorizedError } from '../_error/unauthorization'
 
-export async function shutdownOrganization(app: FastifyInstance) {
+export async function shutdownBusiness(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .delete(
-      '/organizations/:slug',
+      '/business/:slug',
       {
         schema: {
-          tags: ['Organizations'],
-          summary: 'Shutdown organization',
+          tags: ['Business'],
+          summary: 'Shutdown business',
           security: [{ bearerAuth: [] }],
           params: z.object({
             slug: z.string(),
@@ -31,22 +31,21 @@ export async function shutdownOrganization(app: FastifyInstance) {
       async (request, reply) => {
         const { slug } = request.params
         const userId = await request.getCurrentUserId()
-        const { membership, organization } =
-          await request.getUserMembership(slug)
+        const { membership, business } = await request.getUserMembership(slug)
 
-        const authOrganization = organizationSchema.parse(organization)
+        const authBusiness = businessSchema.parse(business)
 
         const { cannot } = getUserPermissions(userId, membership.role)
 
-        if (cannot('delete', authOrganization)) {
+        if (cannot('delete', authBusiness)) {
           throw new UnauthorizedError(
-            `You're not allowed to shutdown this organization.`,
+            `You're not allowed to shutdown this business.`,
           )
         }
 
-        await prisma.organization.delete({
+        await prisma.business.delete({
           where: {
-            id: organization.id,
+            id: business.id,
           },
         })
 

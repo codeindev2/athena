@@ -47,7 +47,7 @@ CREATE TABLE "accounts" (
 CREATE TABLE "clients" (
     "id" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'CLIENT',
-    "organization_id" TEXT NOT NULL,
+    "business_id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE "clients" (
 CREATE TABLE "employees" (
     "id" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'EMPLOYEE',
-    "organization_id" TEXT NOT NULL,
+    "business_id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE "employees" (
 );
 
 -- CreateTable
-CREATE TABLE "organizations" (
+CREATE TABLE "business" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE "organizations" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "organizations_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "business_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -87,7 +87,7 @@ CREATE TABLE "products" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "organization_id" TEXT NOT NULL,
+    "business_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -108,7 +108,7 @@ CREATE TABLE "services" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" VARCHAR(500) NOT NULL,
-    "organization_id" TEXT NOT NULL,
+    "business_id" TEXT NOT NULL,
 
     CONSTRAINT "services_pkey" PRIMARY KEY ("id")
 );
@@ -120,7 +120,7 @@ CREATE TABLE "schedules" (
     "client_id" TEXT NOT NULL,
     "service_id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
-    "organization_id" TEXT NOT NULL,
+    "business_id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -138,22 +138,22 @@ CREATE UNIQUE INDEX "accounts_provider_account_id_key" ON "accounts"("provider_a
 CREATE UNIQUE INDEX "accounts_provider_user_id_key" ON "accounts"("provider", "user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "clients_organization_id_user_id_key" ON "clients"("organization_id", "user_id");
+CREATE UNIQUE INDEX "clients_business_id_user_id_key" ON "clients"("business_id", "user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "employees_organization_id_user_id_key" ON "employees"("organization_id", "user_id");
+CREATE UNIQUE INDEX "employees_business_id_user_id_key" ON "employees"("business_id", "user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "organizations_slug_key" ON "organizations"("slug");
+CREATE UNIQUE INDEX "business_slug_key" ON "business"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "organizations_domain_key" ON "organizations"("domain");
+CREATE UNIQUE INDEX "business_domain_key" ON "business"("domain");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "products_organization_id_name_key" ON "products"("organization_id", "name");
+CREATE UNIQUE INDEX "products_business_id_name_key" ON "products"("business_id", "name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "services_organization_id_name_key" ON "services"("organization_id", "name");
+CREATE UNIQUE INDEX "services_business_id_name_key" ON "services"("business_id", "name");
 
 -- AddForeignKey
 ALTER TABLE "tokens" ADD CONSTRAINT "tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -162,28 +162,28 @@ ALTER TABLE "tokens" ADD CONSTRAINT "tokens_user_id_fkey" FOREIGN KEY ("user_id"
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "clients" ADD CONSTRAINT "clients_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "clients" ADD CONSTRAINT "clients_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "business"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "clients" ADD CONSTRAINT "clients_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "employees" ADD CONSTRAINT "employees_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "employees" ADD CONSTRAINT "employees_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "business"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "employees" ADD CONSTRAINT "employees_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "organizations" ADD CONSTRAINT "organizations_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "business" ADD CONSTRAINT "business_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "products" ADD CONSTRAINT "products_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "products" ADD CONSTRAINT "products_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "business"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "product_images" ADD CONSTRAINT "product_images_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "services" ADD CONSTRAINT "services_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "services" ADD CONSTRAINT "services_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "business"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "schedules" ADD CONSTRAINT "schedules_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "clients"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -195,4 +195,4 @@ ALTER TABLE "schedules" ADD CONSTRAINT "schedules_service_id_fkey" FOREIGN KEY (
 ALTER TABLE "schedules" ADD CONSTRAINT "schedules_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "schedules" ADD CONSTRAINT "schedules_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "schedules" ADD CONSTRAINT "schedules_business_id_fkey" FOREIGN KEY ("business_id") REFERENCES "business"("id") ON DELETE CASCADE ON UPDATE CASCADE;

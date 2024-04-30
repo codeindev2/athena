@@ -8,16 +8,16 @@ import { createSlug } from '@/utils/create-slug'
 
 import { BadRequestError } from '../_error/bad-request'
 
-export async function createOrganization(app: FastifyInstance) {
+export async function createBusiness(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .post(
-      '/organization',
+      '/business',
       {
         schema: {
-          tags: ['Organizations'],
-          summary: 'Create an organization',
+          tags: ['Business'],
+          summary: 'Create an business',
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
@@ -26,7 +26,7 @@ export async function createOrganization(app: FastifyInstance) {
           }),
           response: {
             201: z.object({
-              organizationId: z.string().uuid(),
+              businessId: z.string().uuid(),
             }),
           },
         },
@@ -36,20 +36,20 @@ export async function createOrganization(app: FastifyInstance) {
         const { name, domain, shouldAttachUsersByDomain } = request.body
 
         if (domain) {
-          const organizationByDomain = await prisma.organization.findFirst({
+          const businessByDomain = await prisma.business.findFirst({
             where: {
               domain,
             },
           })
 
-          if (organizationByDomain) {
+          if (businessByDomain) {
             throw new BadRequestError(
-              'Another organization with the same domain already exists',
+              'Another business with the same domain already exists',
             )
           }
         }
 
-        const organization = await prisma.organization.create({
+        const business = await prisma.business.create({
           data: {
             name,
             domain,
@@ -65,7 +65,7 @@ export async function createOrganization(app: FastifyInstance) {
           },
         })
 
-        return reply.send({ organizationId: organization.id })
+        return reply.send({ businessId: business.id })
       },
     )
 }

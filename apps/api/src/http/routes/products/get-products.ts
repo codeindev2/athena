@@ -13,11 +13,11 @@ export async function getProducts(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .get(
-      '/organizations/:slug/products',
+      '/business/:slug/products',
       {
         schema: {
           tags: ['Products'],
-          summary: 'Get all organization products',
+          summary: 'Get all business products',
           security: [{ bearerAuth: [] }],
           params: z.object({
             slug: z.string(),
@@ -29,9 +29,9 @@ export async function getProducts(app: FastifyInstance) {
                   id: z.string().uuid(),
                   description: z.string(),
                   name: z.string(),
-                  organizationId: z.string().uuid(),
+                  businessId: z.string().uuid(),
                   createdAt: z.date(),
-                  organization: z.object({
+                  business: z.object({
                     id: z.string().uuid(),
                     name: z.string().nullable(),
                     avatarUrl: z.string().nullable(),
@@ -45,14 +45,13 @@ export async function getProducts(app: FastifyInstance) {
       async (request, reply) => {
         const { slug } = request.params
         const userId = await request.getCurrentUserId()
-        const { organization, membership } =
-          await request.getUserMembership(slug)
+        const { business, membership } = await request.getUserMembership(slug)
 
         const { cannot } = getUserPermissions(userId, membership.role)
 
         if (cannot('get', 'Product')) {
           throw new UnauthorizedError(
-            `You're not allowed to see organization products.`,
+            `You're not allowed to see business products.`,
           )
         }
 
@@ -61,9 +60,9 @@ export async function getProducts(app: FastifyInstance) {
             id: true,
             name: true,
             description: true,
-            organizationId: true,
+            businessId: true,
             createdAt: true,
-            organization: {
+            business: {
               select: {
                 id: true,
                 name: true,
@@ -72,7 +71,7 @@ export async function getProducts(app: FastifyInstance) {
             },
           },
           where: {
-            organizationId: organization.id,
+            businessId: business.id,
           },
           orderBy: {
             createdAt: 'desc',
