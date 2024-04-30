@@ -6,87 +6,81 @@ import { auth } from '@/http/middlewares/auth'
 import { prisma } from '@/lib/prisma'
 import { getUserPermissions } from '@/utils/get-user-permissions'
 
+import { BadRequestError } from '../_error/bad-request'
 import { UnauthorizedError } from '../_error/unauthorization'
 
-export async function getProjects(app: FastifyInstance) {
+export async function getProduct(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .get(
-      '/organizations/:slug/projects',
+      '/organizations/:orgSlug/product/:productSlug',
       {
         schema: {
-          tags: ['Projects'],
-          summary: 'Get all organization projects',
+          tags: ['Products'],
+          summary: 'Get product details',
           security: [{ bearerAuth: [] }],
           params: z.object({
-            slug: z.string(),
+            orgSlug: z.string(),
+            productSlug: z.string().uuid(),
           }),
           response: {
             200: z.object({
-              projects: z.array(
-                z.object({
+              product: z.object({
+                id: z.string().uuid(),
+                name: z.string(),
+                description: z.string(),
+                organizationId: z.string().uuid(),
+                organization: z.object({
                   id: z.string().uuid(),
-                  description: z.string(),
-                  name: z.string(),
-                  slug: z.string(),
+                  name: z.string().nullable(),
                   avatarUrl: z.string().nullable(),
-                  organizationId: z.string().uuid(),
-                  ownerId: z.string().uuid(),
-                  createdAt: z.date(),
-                  owner: z.object({
-                    id: z.string().uuid(),
-                    name: z.string().nullable(),
-                    avatarUrl: z.string().nullable(),
-                  }),
                 }),
-              ),
+              }),
             }),
           },
         },
       },
       async (request, reply) => {
-        const { slug } = request.params
+        const { orgSlug, productSlug } = request.params
         const userId = await request.getCurrentUserId()
         const { organization, membership } =
-          await request.getUserMembership(slug)
+          await request.getUserMembership(orgSlug)
 
         const { cannot } = getUserPermissions(userId, membership.role)
 
-        if (cannot('get', 'Project')) {
+        if (cannot('get', 'Product')) {
           throw new UnauthorizedError(
-            `You're not allowed to see organization projects.`,
+            `You're not allowed to see this projects.`,
           )
         }
 
-        const projects = await prisma.project.findMany({
+        const product = await prisma.product.findUnique({
           select: {
             id: true,
             name: true,
             description: true,
-            slug: true,
-            ownerId: true,
-            avatarUrl: true,
+            price: true,
             organizationId: true,
-            createdAt: true,
-            owner: {
+            organization: {
               select: {
                 id: true,
                 name: true,
-                email: true,
                 avatarUrl: true,
               },
             },
           },
           where: {
+            id: productSlug,
             organizationId: organization.id,
-          },
-          orderBy: {
-            createdAt: 'desc',
           },
         })
 
-        return reply.send({ projects })
+        if (!product) {
+          throw new BadRequestError('Product not found.')
+        }
+
+        return reply.send({ product })
       },
     )
 }

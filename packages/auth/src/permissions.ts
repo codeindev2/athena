@@ -17,12 +17,13 @@ export const permissions: Record<Role, PermissionsByRole> = {
       ownerId: { $eq: user.id },
     }) // Depois dar permissão para transferir organizacao que pertence ao usuário
   },
-  MEMBER(user, { can }) {
+  CLIENT(user, { can }) {
     can('get', 'User') // Pode criar projetos
-    can(['get', 'create'], 'Project') // Pode gerenciar projetos
-    can(['update', 'delete'], 'Project', { ownerId: { $eq: user.id } }) // Valida se o usuário é o dono do projeto
+    // can(['get', 'create'], 'Product') // Pode gerenciar projetos
+    // can(['update', 'delete'], 'Product', { ownerId: { $eq: user.id } }) // Valida se o usuário é o dono do projeto
   },
-  BILLING(_, { can }) {
-    can('manage', 'Billing')
+  EMPLOYEE(_, { can }) {
+    can('manage', 'User')
   },
+  BILLING() {},
 }

@@ -4,32 +4,33 @@ import { z } from 'zod'
 
 import { auth } from '@/http/middlewares/auth'
 import { prisma } from '@/lib/prisma'
-import { createSlug } from '@/utils/create-slug'
 import { getUserPermissions } from '@/utils/get-user-permissions'
 
 import { UnauthorizedError } from '../_error/unauthorization'
 
-export async function createProject(app: FastifyInstance) {
+export async function createProduct(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .post(
-      '/organizations/:slug/projects',
+      '/organizations/:slug/product',
       {
         schema: {
-          tags: ['Projects'],
-          summary: 'Create a new project',
+          tags: ['Products'],
+          summary: 'Create a new product',
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
             description: z.string(),
+            price: z.number(),
+            image: z.string().url().nullish(),
           }),
           params: z.object({
             slug: z.string(),
           }),
           response: {
             201: z.object({
-              projectId: z.string().uuid(),
+              productId: z.string().uuid(),
             }),
           },
         },
@@ -43,27 +44,26 @@ export async function createProject(app: FastifyInstance) {
 
         const { cannot } = getUserPermissions(userId, membership.role)
 
-        if (cannot('create', 'Project')) {
+        if (cannot('create', 'Product')) {
           throw new UnauthorizedError(
-            `You're not allowed to create new projects.`,
+            `You're not allowed to create new products.`,
           )
         }
         // Fim da verificação de permisses
 
-        const { name, description } = request.body
+        const { name, description, price } = request.body
 
-        const project = await prisma.project.create({
+        const product = await prisma.product.create({
           data: {
             name,
-            slug: createSlug(name),
             description,
             organizationId: organization.id,
-            ownerId: userId,
+            price,
           },
         })
 
         return reply.status(201).send({
-          projectId: project.id,
+          productId: product.id,
         })
       },
     )

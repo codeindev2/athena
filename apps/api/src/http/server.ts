@@ -25,11 +25,11 @@ import { getOrganizations } from './routes/organization/get-organizations'
 import { shutdownOrganization } from './routes/organization/shutdown-organization'
 import { transferOrganization } from './routes/organization/transfer-organization'
 import { updateOrganization } from './routes/organization/update-organization'
-import { createProject } from './routes/projects/create-project'
-import { deleteProject } from './routes/projects/delete-project'
-import { getProject } from './routes/projects/get-project'
-import { getProjects } from './routes/projects/get-projects'
-import { updateProject } from './routes/projects/update-project'
+import { createProduct } from './routes/products/create-product'
+import { deleteProduct } from './routes/products/delete-product'
+import { getProduct } from './routes/products/get-product'
+import { getProducts } from './routes/products/get-products'
+import { updateProduct } from './routes/products/update-product'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -42,8 +42,8 @@ app.setErrorHandler(errorHandler)
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'Api Saas',
-      description: 'Full-stack SaaS with multi-tenant & RBAC.',
+      title: 'Athena API',
+      description: 'Documentação da API Athena',
       version: '1.0.0',
     },
     components: {
@@ -89,12 +89,12 @@ app.register(updateOrganization)
 app.register(shutdownOrganization)
 app.register(transferOrganization)
 
-// Projetos
-app.register(createProject)
-app.register(deleteProject)
-app.register(getProject)
-app.register(getProjects)
-app.register(updateProject)
+// Produtos
+app.register(createProduct)
+app.register(deleteProduct)
+app.register(getProduct)
+app.register(getProducts)
+app.register(updateProduct)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {

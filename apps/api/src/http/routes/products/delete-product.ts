@@ -1,4 +1,3 @@
-import { projectSchema } from '@saas/auth'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -10,20 +9,20 @@ import { getUserPermissions } from '@/utils/get-user-permissions'
 import { BadRequestError } from '../_error/bad-request'
 import { UnauthorizedError } from '../_error/unauthorization'
 
-export async function deleteProject(app: FastifyInstance) {
+export async function deleteProduct(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
     .delete(
-      '/organizations/:slug/projects/:projectId',
+      '/organizations/:slug/product/:productId',
       {
         schema: {
-          tags: ['Projects'],
-          summary: 'Delete a project',
+          tags: ['Products'],
+          summary: 'Delete a product',
           security: [{ bearerAuth: [] }],
           params: z.object({
             slug: z.string(),
-            projectId: z.string().uuid(),
+            productId: z.string().uuid(),
           }),
           response: {
             204: z.null(),
@@ -31,34 +30,33 @@ export async function deleteProject(app: FastifyInstance) {
         },
       },
       async (request, reply) => {
-        const { slug, projectId } = request.params
+        const { slug, productId } = request.params
         const userId = await request.getCurrentUserId()
         const { organization, membership } =
           await request.getUserMembership(slug)
 
-        const project = await prisma.project.findUnique({
+        const product = await prisma.product.findUnique({
           where: {
-            id: projectId,
+            id: productId,
             organizationId: organization.id,
           },
         })
 
-        if (!project) {
-          throw new BadRequestError('Project not found.')
+        if (!product) {
+          throw new BadRequestError('Product not found.')
         }
 
         const { cannot } = getUserPermissions(userId, membership.role)
-        const authProject = projectSchema.parse(project)
 
-        if (cannot('delete', authProject)) {
+        if (cannot('delete', 'Product')) {
           throw new UnauthorizedError(
-            `You're not allowed to delete this project.`,
+            `You're not allowed to delete this product.`,
           )
         }
 
-        await prisma.project.delete({
+        await prisma.product.delete({
           where: {
-            id: projectId,
+            id: productId,
           },
         })
 

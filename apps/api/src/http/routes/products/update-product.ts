@@ -1,4 +1,4 @@
-import { projectSchema } from '@saas/auth'
+// import { productSchema } from '@saas/auth'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -10,24 +10,25 @@ import { getUserPermissions } from '@/utils/get-user-permissions'
 import { BadRequestError } from '../_error/bad-request'
 import { UnauthorizedError } from '../_error/unauthorization'
 
-export async function updateProject(app: FastifyInstance) {
+export async function updateProduct(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
-    .delete(
-      '/organizations/:slug/projects/:projectId',
+    .patch(
+      '/organizations/:slug/product/:productId',
       {
         schema: {
-          tags: ['Projects'],
-          summary: 'Update a project',
+          tags: ['Products'],
+          summary: 'Update a product',
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
             description: z.string(),
+            price: z.coerce.number(),
           }),
           params: z.object({
             slug: z.string(),
-            projectId: z.string().uuid(),
+            productId: z.string().uuid(),
           }),
           response: {
             204: z.null(),
@@ -35,40 +36,41 @@ export async function updateProject(app: FastifyInstance) {
         },
       },
       async (request, reply) => {
-        const { slug, projectId } = request.params
+        const { slug, productId } = request.params
         const userId = await request.getCurrentUserId()
         const { organization, membership } =
           await request.getUserMembership(slug)
 
-        const project = await prisma.project.findUnique({
+        const product = await prisma.product.findUnique({
           where: {
-            id: projectId,
+            id: productId,
             organizationId: organization.id,
           },
         })
 
-        if (!project) {
-          throw new BadRequestError('Project not found.')
+        if (!product) {
+          throw new BadRequestError('Product not found.')
         }
 
         const { cannot } = getUserPermissions(userId, membership.role)
-        const authProject = projectSchema.parse(project)
+        // const authProject = productSchema.parse(product)
 
-        if (cannot('update', authProject)) {
+        if (cannot('update', 'Product')) {
           throw new UnauthorizedError(
             `You're not allowed to update this project.`,
           )
         }
 
-        const { name, description } = request.body
+        const { name, description, price } = request.body
 
-        await prisma.project.update({
+        await prisma.product.update({
           where: {
-            id: projectId,
+            id: productId,
           },
           data: {
             name,
             description,
+            price,
           },
         })
 
