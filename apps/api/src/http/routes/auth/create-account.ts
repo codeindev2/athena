@@ -56,7 +56,7 @@ export async function createAccount(app: FastifyInstance) {
           name,
           email,
           passwordHash,
-          member_on: autoJoinDomainBusiness
+          members: autoJoinDomainBusiness
             ? {
                 create: {
                   businessId: autoJoinDomainBusiness.id,

@@ -24,6 +24,11 @@ import { getBusinessAll } from './routes/business/get-business-all'
 import { getMembership } from './routes/business/get-membership'
 import { shutdownBusiness } from './routes/business/shutdown-business'
 import { updateBusiness } from './routes/business/update-business'
+import { createMember } from './routes/member/create-member'
+import { deleteMember } from './routes/member/delete-member'
+import { getMember } from './routes/member/get-member'
+import { getMembers } from './routes/member/get-members'
+import { updateMember } from './routes/member/update-member'
 import { createProduct } from './routes/product/create-product'
 import { deleteProduct } from './routes/product/delete-product'
 import { getProduct } from './routes/product/get-product'
@@ -46,8 +51,9 @@ app.setErrorHandler(errorHandler)
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'Athena API',
-      description: 'Documentação da API Athena',
+      title: 'codeindev49 API Athena',
+      description:
+        'codeindev49 API Athena sistema de gerenciamento de serviços e produtos',
       version: '1.0.0',
     },
     components: {
@@ -105,6 +111,13 @@ app.register(getService)
 app.register(getServices)
 app.register(updateService)
 app.register(deleteService)
+
+// Membros
+app.register(createMember)
+app.register(getMembers)
+app.register(deleteMember)
+app.register(getMember)
+app.register(updateMember)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {
