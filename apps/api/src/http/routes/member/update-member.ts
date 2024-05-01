@@ -22,9 +22,9 @@ export async function updateMember(app: FastifyInstance) {
           summary: 'Update a member',
           security: [{ bearerAuth: [] }],
           body: z.object({
-            name: z.string(),
-            email: z.string(),
-            role: roleSchema,
+            name: z.string().optional(),
+            email: z.string().email().optional(),
+            role: roleSchema.optional(),
             phone: z.string().nullish(),
             address: z.string().nullish(),
             password: z.string().nullish(),
@@ -68,7 +68,7 @@ export async function updateMember(app: FastifyInstance) {
               },
             },
             user: {
-              create: {
+              update: {
                 name,
                 email,
                 address: address ?? undefined,
