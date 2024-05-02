@@ -18,6 +18,7 @@ export * from './models/business'
 export * from './models/product'
 export * from './models/user'
 export * from './models/roles'
+export * from './models/member'
 
 const appAbilitySchema = z.union([
   userSubject,

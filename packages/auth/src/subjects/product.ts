@@ -10,7 +10,7 @@ export const productSubject = z.tuple([
     z.literal('update'),
     z.literal('manage'),
   ]),
-  z.literal('Product', productSchema),
+  z.union([z.literal('Product'), productSchema]),
 ])
 
 export type ProductSubject = z.infer<typeof productSubject>

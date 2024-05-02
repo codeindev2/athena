@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { memberSchema } from '../models/member'
+import { memberSchema } from '..'
 
 export const memberSubject = z.tuple([
   z.union([
@@ -10,7 +10,7 @@ export const memberSubject = z.tuple([
     z.literal('update'),
     z.literal('manage'),
   ]),
-  z.literal('Member', memberSchema),
+  z.union([z.literal('Member'), memberSchema]),
 ])
 
 export type MemberSubject = z.infer<typeof memberSubject>
