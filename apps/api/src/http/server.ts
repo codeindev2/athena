@@ -34,6 +34,7 @@ import { deleteProduct } from './routes/product/delete-product'
 import { getProduct } from './routes/product/get-product'
 import { getProducts } from './routes/product/get-products'
 import { updateProduct } from './routes/product/update-product'
+import { createSchedule } from './routes/schedule/create-schedule'
 import { createService } from './routes/service/create-service'
 import { deleteService } from './routes/service/delete-service'
 import { getService } from './routes/service/get-service'
@@ -118,6 +119,9 @@ app.register(getMembers)
 app.register(deleteMember)
 app.register(getMember)
 app.register(updateMember)
+
+// Agendamentos
+app.register(createSchedule)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {

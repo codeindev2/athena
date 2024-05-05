@@ -23,8 +23,8 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 
 ### Clients
 
-- [ ] It should be able to get business clients;
-- [ ] It should be able to update a member role;
+- [x] It should be able to get business clients;
+- [x] It should be able to update a member role;
 
 ### Products
 
@@ -35,10 +35,10 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 
 ### Services
 
-- [ ] It should be able to get services within a business;
-- [ ] It should be able to create a new service (name, url, description);
-- [ ] It should be able to update a service (name, url, description);
-- [ ] It should be able to delete a service;
+- [x] It should be able to get services within a business;
+- [x] It should be able to create a new service (name, url, description);
+- [x] It should be able to update a service (name, url, description);
+- [x] It should be able to delete a service;
 
 ### Schedules
 

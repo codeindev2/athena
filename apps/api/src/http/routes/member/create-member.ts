@@ -23,8 +23,8 @@ export async function createMember(app: FastifyInstance) {
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
-            email: z.string(),
-            role: roleSchema,
+            email: z.string().email(),
+            role: roleSchema.nullish(),
             phone: z.string().nullish(),
             address: z.string().nullish(),
             password: z.string().nullish(),

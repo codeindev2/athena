@@ -1,12 +1,12 @@
 @baseUrl = http://localhost:3333
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlYTFmMWRiOS02OGI1LTRjYjUtOTUzMi1kY2JiOTRmNDhiMWEiLCJpYXQiOjE3MTQwOTgyNDYsImV4cCI6MTcxNDcwMzA0Nn0.jq6P5tsbU5ZMafAsMCLrF8kpc3ZvJg26i72gK83kxyc
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NzdhMjc3MC00YWQ1LTQ1NTgtOTg2MS0wMmQ5ZDhhMzg0NjEiLCJpYXQiOjE3MTQ3NDI1MjQsImV4cCI6MTcxNTM0NzMyNH0.ruxmact5XSo-mvm80-ASvMcvYBBUCvpO8Qe-DyxJsFc
 ###  Users
 POST {{baseUrl}}/users HTTP/1.1
 content-type: application/json
 
 {
     "name": "Wilson",
-    "email": "wilson@sample.com",
+    "email": "wilson@codeindev.com",
     "password": "123456"
 }
 ### Authenticate with password
@@ -15,8 +15,8 @@ POST {{baseUrl}}/sessions/password HTTP/1.1
 content-type: application/json
 
 {
-    "email": "wilson@sample.com",
-    "password": "261456"
+    "email": "wilson@codeindev.com",
+    "password": "123456"
 }
 
 ### Get profile
@@ -39,5 +39,18 @@ content-type: application/json
 {
     "code": "70f2a2b7-eb8c-46a2-ab58-b2c59271922d",
     "password": "261456"
+}
+
+### Appointment
+POST {{baseUrl}}/business/code-in-dev/schedule HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{ token }}
+
+{
+    "businessId": "d478f229-e68b-41b4-9dea-109df045cf76",
+    "serviceId": "66586d33-5e11-44b0-b74e-5302d131894b",
+    "clientId": "cf062d1e-6620-4789-a989-f398870eb495",
+    "ownerId": "477a2770-4ad5-4558-9861-02d9d8a38461",
+    "date": "2024-05-05T09:52:00.000Z"
 }
 

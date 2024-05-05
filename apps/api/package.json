@@ -20,6 +20,7 @@
     "@saas/prettier": "workspace:*",
     "@saas/tsconfig": "workspace:*",
     "bcryptjs": "^2.4.3",
+    "date-fns": "^3.6.0",
     "dotenv-cli": "^7.4.1",
     "fastify": "^4.26.2",
     "fastify-plugin": "^4.5.1",
@@ -38,8 +39,5 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.12.7",
     "tsx": "^4.7.2"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

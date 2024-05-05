@@ -6,7 +6,6 @@ export const userSchema = z.object({
   __typename: z.literal('User').default('User'),
 
   id: z.string().uuid(),
-  businessId: z.string().uuid(),
   role: roleSchema,
 })
 
