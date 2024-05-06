@@ -41,6 +41,7 @@ import { getService } from './routes/service/get-service'
 import { getServices } from './routes/service/get-services'
 import { updateService } from './routes/service/update-service'
 import { listAppointments } from './routes/appointment/list-appointments'
+import { listEmployeeAvailableHours } from './routes/appointment/list-employee-day-available-hours'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -124,6 +125,7 @@ app.register(updateMember)
 // Agendamentos
 app.register(createAppointment)
 app.register(listAppointments)
+app.register(listEmployeeAvailableHours)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {

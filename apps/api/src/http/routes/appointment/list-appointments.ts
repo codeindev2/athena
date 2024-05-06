@@ -13,7 +13,7 @@ export const listAppointments = async (app: FastifyInstance) => {
     .post('/business/:slug/appointments', {
       schema: {
         tags: ['Appointments'],
-        summary: 'List appointments',
+        summary: 'List appointments for month by employee',
         security: [{ bearerAuth: [] }],
         params: z.object({
           slug: z.string(),
