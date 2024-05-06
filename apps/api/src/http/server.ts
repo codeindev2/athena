@@ -34,12 +34,13 @@ import { deleteProduct } from './routes/product/delete-product'
 import { getProduct } from './routes/product/get-product'
 import { getProducts } from './routes/product/get-products'
 import { updateProduct } from './routes/product/update-product'
-import { createSchedule } from './routes/schedule/create-schedule'
+import { createAppointment } from './routes/appointment/create-appointment'
 import { createService } from './routes/service/create-service'
 import { deleteService } from './routes/service/delete-service'
 import { getService } from './routes/service/get-service'
 import { getServices } from './routes/service/get-services'
 import { updateService } from './routes/service/update-service'
+import { listAppointments } from './routes/appointment/list-appointments'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -121,7 +122,8 @@ app.register(getMember)
 app.register(updateMember)
 
 // Agendamentos
-app.register(createSchedule)
+app.register(createAppointment)
+app.register(listAppointments)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {

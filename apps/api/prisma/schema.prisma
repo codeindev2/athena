@@ -20,7 +20,7 @@ model User {
   accounts      Account[]
   owns_business Business[]
   members       Member[]
-  schedules     Schedule[]
+  appointments     Appointment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -72,7 +72,7 @@ model Member {
   businessId String     @map("business_id")
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String     @map("user_id")
-  schedules  Schedule[]
+  appointments  Appointment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -90,10 +90,12 @@ model Business {
   avatarUrl                 String?    @map("avatar_url")
   owner                     User       @relation(fields: [ownerId], references: [id])
   ownerId                   String     @map("owner_id")
+  startWorkHour             Int       @default(8) @map("start_work_hour")
+  endWorkHour               Int       @default(18) @map("end_work_hour")
   members                   Member[]
   products                  Product[]
   services                  Service[]
-  schedules                 Schedule[]
+  appointments                 Appointment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -132,13 +134,20 @@ model Service {
   description String     @db.VarChar(500)
   business    Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
   businessId  String     @map("business_id")
-  schedules   Schedule[]
+  appointments   Appointment[]
 
   @@unique([businessId, name])
   @@map("services")
 }
 
-model Schedule {
+enum AppoinymentStatus {
+  CONFIRMED
+  CANCELED
+  PENDING
+  COMPLETED
+}
+
+model Appointment {
   id           String   @id @default(uuid())
   observations String?  @db.VarChar(500)
   client       Member   @relation(fields: [clientId], references: [id])
@@ -150,8 +159,10 @@ model Schedule {
   business     Business @relation(fields: [businessId], references: [id])
   businessId   String   @map("business_id")
   date         DateTime
+  status       AppoinymentStatus @default(PENDING)
+  active       Boolean  @default(true)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  @@map("schedules")
+  @@map("appointments")
 }

@@ -42,14 +42,14 @@ content-type: application/json
 }
 
 ### Appointment
-POST {{baseUrl}}/business/code-in-dev/schedule HTTP/1.1
+POST {{baseUrl}}/business/code-in-dev/appoitment HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{ token }}
 
 {
     "businessId": "d478f229-e68b-41b4-9dea-109df045cf76",
     "serviceId": "66586d33-5e11-44b0-b74e-5302d131894b",
-    "clientId": "cf062d1e-6620-4789-a989-f398870eb495",
+    "clientId": "196fe64a-2fce-41af-bfde-6e2536812fcd",
     "ownerId": "477a2770-4ad5-4558-9861-02d9d8a38461",
     "date": "2024-05-05T09:52:00.000Z"
 }

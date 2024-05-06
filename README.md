@@ -43,8 +43,8 @@ This project contains all the necessary boilerplate to setup a multi-tenant SaaS
 ### Schedules
 
 - [ ] It should be able to get schedules within a business and member;
-- [ ] It should be able to create a new schedule (name, url, description);
-- [ ] It should be able to update a schedule (name, url, description);
+- [ ] It should be able to create a new schedule 
+- [ ] It should be able to update a schedule 
 - [ ] It should be able to delete a schedule;
 ### Billing
 
