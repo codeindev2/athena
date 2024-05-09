@@ -15,10 +15,10 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import GoogleSignInButton from "../github-auth-button";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Enter a valid email address" }),
+  email: z.string().email({ message: "E-mail inválido" }),
+  password: z.string().min(6, { message: "Senha deve possuir no minimo 6 caracteres"})
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
@@ -28,7 +28,8 @@ export default function UserAuthForm() {
   const callbackUrl = searchParams.get("callbackUrl");
   const [loading, setLoading] = useState(false);
   const defaultValues = {
-    email: "demo@gmail.com",
+    email: "",
+    password:  ""
   };
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
@@ -38,6 +39,7 @@ export default function UserAuthForm() {
   const onSubmit = async (data: UserFormValue) => {
     signIn("credentials", {
       email: data.email,
+      password: data.password,
       callbackUrl: callbackUrl ?? "/dashboard",
     });
   };
@@ -67,7 +69,24 @@ export default function UserAuthForm() {
               </FormItem>
             )}
           />
-
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Digite sua senha"
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button disabled={loading} className="ml-auto w-full" type="submit">
             Entrar
           </Button>

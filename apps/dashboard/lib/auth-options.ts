@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialProvider from "next-auth/providers/credentials";
+import { api } from "./axios";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -15,12 +16,21 @@ export const authOptions: NextAuthOptions = {
           type: "email",
           placeholder: "example@gmail.com",
         },
+        password: {
+          label: "password",
+          type: "password",
+          placeholder: "******",
+        }
       },
       async authorize(credentials, req) {
-        const user = { id: "1", name: "John", email: credentials?.email };
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
+        const { email, password } = credentials!;
+        const response = await api.post("/sessions/password", {
+          email,
+          password
+        });
+
+        if (response.status === 201) {
+          return response.data.user;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
