@@ -10,13 +10,6 @@ import {
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash } from "lucide-react";
@@ -24,26 +17,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import FileUpload from "../file-upload";
 import { useToast } from "../ui/use-toast";
 import { api } from "@/lib/axios";
 import { useSession } from "next-auth/react";
-const ImgSchema = z.object({
-  fileName: z.string(),
-  name: z.string(),
-  fileSize: z.number(),
-  size: z.number(),
-  fileKey: z.string(),
-  key: z.string(),
-  fileUrl: z.string(),
-  url: z.string(),
-});
-export const IMG_MAX_LIMIT = 3;
 const formSchema = z.object({
-  // image: z
-  //   .array(ImgSchema)
-  //   .max(IMG_MAX_LIMIT, { message: "You can only add up to 3 images" })
-  //   .min(1, { message: "At least one image must be added." }).,
   name: z
     .string()
     .min(3, { message: "Nome é obrigatório" }),
@@ -69,11 +46,9 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const title = initialData ? `Editar ${initialTitle}` : `Cadastro de ${initialTitle}`;
   const description = initialData ? `Editar ${initialTitle}` : `Adicionar novo ${initialTitle}`;
-  const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Atualizar" : "Salvar";
   const session = useSession();
 
@@ -98,20 +73,33 @@ export const MemberForm: React.FC<MemberFormProps> = ({
     try {
       setLoading(true);
       if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
+        await api.patch(`/business/marieju/member/${initialData._id}`, data);
+        toast({
+          title: "Atualização.",
+          description: "Cliente atualizado com sucesso.",
+          style: {  
+            backgroundColor: "#4BB543",
+            color: "#fff",
+            fontWeight: "bold",
+          },
+        });
       } else {
-        const res = await api.post(`/business/marieju/member`, data, {
+        await api.post(`/business/marieju/member`, data, {
           headers: {
             "Content-Type": "application/json",
-            "Authorization ": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        toast({
+          title: "Cadastro.",
+          description: "Cliente cadastrado com sucesso.",
+          style: {  
+            backgroundColor: "#4BB543",
+            color: "#fff",
+            fontWeight: "bold",
           },
         });
       }
-    
-      toast({
-        title: "Cadastro.",
-        description: "Cliente cadastrado com sucesso.",
-      });
       router.refresh();
       router.push(`/dashboard/client`);
      
@@ -135,20 +123,12 @@ export const MemberForm: React.FC<MemberFormProps> = ({
     } catch (error: any) {
     } finally {
       setLoading(false);
-      setOpen(false);
     }
   };
 
-  // const triggerImgUrlValidation = () => form.trigger("image");
 
   return (
     <>
-      {/* <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      /> */}
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
@@ -156,7 +136,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({
             disabled={loading}
             variant="destructive"
             size="sm"
-            onClick={() => setOpen(true)}
           >
             <Trash className="h-4 w-4" />
           </Button>
@@ -168,23 +147,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
-          {/* <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <FileUpload
-                    onChange={field.onChange}
-                    value={field.value}
-                    onRemove={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-          <div className="md:grid md:grid-cols-4 gap-8">
+          <div className="md:grid md:grid-cols-2 gap-2">
             <FormField
               control={form.control}
               name="name"

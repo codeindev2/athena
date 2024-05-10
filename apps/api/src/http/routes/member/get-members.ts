@@ -23,33 +23,47 @@ export async function getMembers(app: FastifyInstance) {
           params: z.object({
             slug: z.string(),
           }),
+          querystring: z.object({
+            page: z.coerce.number().default(1),
+            limit: z.coerce.number().default(10),
+            search: z.string().optional(),
+          }),
           response: {
             200: z.object({
-              members: z.array(
-                z.object({
-                  id: z.string().uuid(),
-                  role: z.string().nullable(),
-                  user: z.object({
+              members: z.object({
+                data: z.array(
+                  z.object({
                     id: z.string().uuid(),
-                    name: z.string().nullable(),
-                    email: z.string(),
-                    phone: z.string().nullable(),
-                    address: z.string().nullable(),
-                    avatarUrl: z.string().nullable(),
+                    role: z.string().nullable(),
+                    user: z.object({
+                      id: z.string().uuid(),
+                      name: z.string().nullable(),
+                      email: z.string(),
+                      phone: z.string().nullable(),
+                      address: z.string().nullable(),
+                      avatarUrl: z.string().nullable(),
+                    }),
+                    business: z.object({
+                      id: z.string().uuid(),
+                      name: z.string().nullable(),
+                      avatarUrl: z.string().nullable(),
+                    }),
                   }),
-                  business: z.object({
-                    id: z.string().uuid(),
-                    name: z.string().nullable(),
-                    avatarUrl: z.string().nullable(),
-                  }),
+                ),
+                meta: z.object({
+                  page: z.number(),
+                  limit: z.number(),
+                  total: z.number(),
+                  paginationNext: z.boolean(),
                 }),
-              ),
+              }),
             }),
           },
         },
       },
       async (request, reply) => {
         const { slug } = request.params
+        const { limit, page, search } = request.query
         const userId = await request.getCurrentUserId()
         const { business, membership } = await request.getUserMembership(slug)
 
@@ -58,8 +72,9 @@ export async function getMembers(app: FastifyInstance) {
         if (cannot('get', 'Member')) {
           throw new UnauthorizedError(`You're not allowed to see this member.`)
         }
-
         const members = await prisma.member.findMany({
+          take: limit,
+          skip: (page - 1) * limit,
           select: {
             id: true,
             role: true,
@@ -83,6 +98,24 @@ export async function getMembers(app: FastifyInstance) {
           },
           where: {
             businessId: business.id,
+            AND: [
+              {
+                user: {
+                  name: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+              {
+                user: {
+                  email: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            ],
           },
         })
 
@@ -90,7 +123,45 @@ export async function getMembers(app: FastifyInstance) {
           throw new BadRequestError('Member not found.')
         }
 
-        return reply.send({ members })
+        const total = await prisma.member.count({
+          where: {
+            businessId: business.id,
+            AND: [
+              {
+                user: {
+                  name: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+              {
+                user: {
+                  email: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            ],
+          },
+        })
+
+        // Essa parte é responsável por verificar se ainda existem mais registros para serem paginados
+        // Se o total de registros for maior que a página atual vezes a quantidade de registros por página
+        // exemplo: 100 > 10 * 10 = 100 a resposta será true mas se for 100 > 10 * 20 = 200 a resposta será false
+        const paginationNext = total > page * limit
+
+        const response = {
+          data: members,
+          meta: {
+            page,
+            limit,
+            total,
+            paginationNext,
+          },
+        }
+        return reply.send({ members: response })
       },
     )
 }

@@ -1,6 +1,5 @@
 import BreadCrumb from "@/components/breadcrumb";
 import { columns } from "@/components/tables/employee-tables/columns";
-import { EmployeeTable } from "@/components/tables/employee-tables/employee-table";
 import { buttonVariants } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
@@ -8,6 +7,7 @@ import { Employee } from "@/constants/data";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { ClientTable } from "./components/client-tables/table";
 
 const breadcrumbItems = [{ title: "Employee", link: "/dashboard/employee" }];
 
@@ -51,7 +51,7 @@ export default async function page({ searchParams }: paramsProps) {
         </div>
         <Separator />
 
-        <EmployeeTable
+        <ClientTable
           searchKey="country"
           pageNo={page}
           columns={columns}
