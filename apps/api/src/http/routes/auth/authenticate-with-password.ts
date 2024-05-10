@@ -24,8 +24,9 @@ export async function authenticateWithPassword(app: FastifyInstance) {
             user: z.object({
               name: z.string(),
               email: z.string().email(),
+              image: z.string().nullable(),
+              token: z.string(),
             }),
-            token: z.string(),
           }),
         },
       },
@@ -73,8 +74,9 @@ export async function authenticateWithPassword(app: FastifyInstance) {
         user: {
           name: userFromEmail.name!,
           email: userFromEmail.email,
+          image: userFromEmail.avatarUrl,
+          token,
         },
-        token,
       })
     },
   )

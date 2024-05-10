@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (response.status === 201) {
-          return response.data.user;
+          return response.data.user
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
@@ -40,6 +40,15 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+    async session({ session, token, user }) {
+      session.user = token as any;
+      return session;
+    },
+  },
   pages: {
     signIn: "/", //sigin page
   },

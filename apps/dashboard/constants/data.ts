@@ -121,9 +121,9 @@ export const navItems: NavItem[] = [
  
   {
     title: "Clientes",
-    href: "/dashboard/employee",
+    href: "/dashboard/client",
     icon: "employee",
-    label: "employee",
+    label: "cliente",
   },
   {
     title: "Funcionarios",
