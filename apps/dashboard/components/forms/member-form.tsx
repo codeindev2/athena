@@ -145,7 +145,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-full"
+          className="space-y-2 w-full"
         >
           <div className="md:grid md:grid-cols-2 gap-2">
             <FormField
@@ -211,9 +211,15 @@ export const MemberForm: React.FC<MemberFormProps> = ({
             />
           </div>
          
-          <Button  className="ml-auto" type="submit">
-            {action}
-          </Button>
+          <div className="flex flex-col md:flex-row align-items justify-between">
+        
+            <Button className="mb-2" type="submit">
+              {action}
+            </Button>
+            <Button variant="destructive" className="" type="submit">
+              Cancelar
+            </Button>
+          </div>
         </form>
       </Form>
     </>

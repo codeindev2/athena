@@ -189,7 +189,7 @@ export function ClientTable<TData, TValue>({
   return (
     <>
       <Input
-        placeholder={`Search ${searchKey}...`}
+        placeholder={`Pesquisar...`}
         value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
         onChange={(event) =>
           table.getColumn(searchKey)?.setFilterValue(event.target.value)
@@ -221,7 +221,7 @@ export function ClientTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && "selecionado"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -252,12 +252,12 @@ export function ClientTable<TData, TValue>({
         <div className="flex items-center justify-between w-full">
           <div className="flex-1 text-sm text-muted-foreground">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {table.getFilteredRowModel().rows.length} linha(s) selecionada(s)
           </div>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
             <div className="flex items-center space-x-2">
               <p className="whitespace-nowrap text-sm font-medium">
-                Rows per page
+                Linhas por página:
               </p>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -282,13 +282,9 @@ export function ClientTable<TData, TValue>({
           </div>
         </div>
         <div className="flex items-center justify-between sm:justify-end gap-2 w-full">
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </div>
           <div className="flex items-center space-x-2">
             <Button
-              aria-label="Go to first page"
+              aria-label="Ir para a primeira página"
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(0)}
@@ -297,7 +293,7 @@ export function ClientTable<TData, TValue>({
               <DoubleArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
-              aria-label="Go to previous page"
+              aria-label="Proxima página"
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.previousPage()}
@@ -306,7 +302,7 @@ export function ClientTable<TData, TValue>({
               <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
-              aria-label="Go to next page"
+              aria-label="Pagina anterior"
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.nextPage()}
@@ -315,7 +311,7 @@ export function ClientTable<TData, TValue>({
               <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
-              aria-label="Go to last page"
+              aria-label="Ir para a última página"
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}

@@ -98,7 +98,7 @@ export async function getMembers(app: FastifyInstance) {
           },
           where: {
             businessId: business.id,
-            AND: [
+            OR: [
               {
                 user: {
                   name: {
@@ -116,6 +116,11 @@ export async function getMembers(app: FastifyInstance) {
                 },
               },
             ],
+          },
+          orderBy: {
+            user: {
+              name: 'asc',
+            },
           },
         })
 
