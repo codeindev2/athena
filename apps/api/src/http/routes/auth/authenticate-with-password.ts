@@ -24,8 +24,8 @@ export async function authenticateWithPassword(app: FastifyInstance) {
             user: z.object({
               name: z.string(),
               email: z.string().email(),
-              image: z.string().nullable(),
-              token: z.string(),
+              image: z.string().nullish(),
+              accessToken: z.string(),
             }),
           }),
         },
@@ -35,6 +35,19 @@ export async function authenticateWithPassword(app: FastifyInstance) {
       const { email, password } = request.body
 
       const userFromEmail = await prisma.user.findUnique({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          avatarUrl: true,
+          owns_business: {
+            select: {
+              name: true,
+              slug: true,
+            },
+          },
+          passwordHash: true,
+        },
         where: {
           email,
         },
@@ -75,7 +88,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
           name: userFromEmail.name!,
           email: userFromEmail.email,
           image: userFromEmail.avatarUrl,
-          token,
+          accessToken: token,
         },
       })
     },

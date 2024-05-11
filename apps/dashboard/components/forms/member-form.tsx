@@ -52,7 +52,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   const action = initialData ? "Atualizar" : "Salvar";
   const session = useSession();
 
-  const token = session.data?.user.token
+  const token = session.data?.user?.accessToken
 
   const defaultValues = initialData
     ? initialData
@@ -69,7 +69,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     try {
       setLoading(true);
       if (initialData) {
@@ -84,12 +83,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
           },
         });
       } else {
-        await api.post(`/business/marieju/member`, data, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await api.post(`/business/marieju/member`, data);
         toast({
           title: "Cadastro.",
           description: "Cliente cadastrado com sucesso.",

@@ -9,6 +9,7 @@ import { ClientTable } from "./components/client-tables/table";
 import { api } from "@/lib/axios";
 import { getServerSession } from "next-auth";
 import { columns } from "./components/client-tables/columns";
+import { authOptions } from "@/lib/auth-options";
 
 const breadcrumbItems = [{ title: "Clientes", link: "/dashboard/client" }];
 
@@ -23,14 +24,9 @@ export default async function page({ searchParams }: paramsProps) {
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search ? searchParams.search.toString() : ''  
   const offset = (page - 1) * pageLimit;
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlYjIxOWM0NS1jNDQxLTQzYTEtOWExMS04YTRmMmJmZjE0MGUiLCJpYXQiOjE3MTUxODA1MTEsImV4cCI6MTcxNTc4NTMxMX0.0jiHVeOlckG5ACPNRtmb85eniiyURS_0U5PKi4J65Qg"
-
-
-  const res = await api.get(`business/marieju/members?page=${page}&limit${offset}&search=${search}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }
-  });
+  const session = await getServerSession(authOptions);
+  api.defaults.headers["Authorization"] = `Bearer ${session?.user?.accessToken}`;
+  const res = await api.get(`business/marieju/members?page=${page}&limit${offset}&search=${search}`);
   const members =  res.data.members;
   const totalUsers = members.meta.total; //1000
   const pageCount = Math.ceil(totalUsers / offset);
