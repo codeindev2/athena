@@ -223,7 +223,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <Input type="number" disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
+                 </FormItem>
               )}
             />
             <FormField

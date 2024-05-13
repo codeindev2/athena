@@ -13,6 +13,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent} from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
+import { BusinessSelect } from "./_components/select-business";
 
 export default function page() {
 
@@ -25,7 +26,8 @@ export default function page() {
             Olá ! {session?.user?.name}👋
           </h2>
           <div className="hidden md:flex items-center space-x-2">
-            <CalendarDateRangePicker />
+            {/* <CalendarDateRangePicker /> */}
+            <BusinessSelect />
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
@@ -34,7 +36,7 @@ export default function page() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Revenue
+                    Clientes 
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -51,9 +53,6 @@ export default function page() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
                 </CardContent>
               </Card>
               <Card>

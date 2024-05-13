@@ -21,7 +21,7 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
   api.defaults.headers["Authorization"] = `Bearer ${session?.user?.accessToken}`;
-
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>

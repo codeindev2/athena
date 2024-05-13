@@ -1,8 +1,12 @@
+"use client";
 import { DashboardNav } from "@/components/dashboard-nav";
 import { navItems } from "@/constants/data";
 import { cn } from "@/lib/utils";
+import { useBusiness } from "@/store/business";
 
 export default function Sidebar() {
+  const {business} = useBusiness();
+
   return (
     <nav
       className={cn(`relative hidden h-screen border-r pt-16 lg:block w-72`)}
@@ -11,7 +15,7 @@ export default function Sidebar() {
         <div className="px-3 py-2">
           <div className="space-y-1">
             <h2 className="mb-2 px-4 text-xl font-semibold tracking-tight">
-              BUSINESS
+              { business?.name }
             </h2>
             <DashboardNav items={navItems} />
           </div>
