@@ -12,82 +12,92 @@ import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "../ui/use-toast";
 import { api } from "@/lib/axios";
-import { useSession } from "next-auth/react";
+import { useBusiness } from "@/store/business";
+import Link from "next/link";
 const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: "Nome é obrigatório" }),
-  email: z
-    .string()
-    .email({ message: "Por favor entre co email válido" }),
+  name: z.string().min(3, { message: "Nome é obrigatório" }),
+  email: z.string().email({ message: "Por favor entre co email válido" }),
   phone: z.string().optional(),
-  address: z.string().optional()
-
+  address: z.string().optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
 
 interface MemberFormProps {
   initialData?: any | null;
-  title: string, 
+  title: string;
 }
 
 export const MemberForm: React.FC<MemberFormProps> = ({
   initialData,
-  title: initialTitle
+  title: initialTitle,
 }) => {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const title = initialData ? `Editar ${initialTitle}` : `Cadastro de ${initialTitle}`;
-  const description = initialData ? `Editar ${initialTitle}` : `Adicionar novo ${initialTitle}`;
+  const title = initialData
+    ? `Editar ${initialTitle}`
+    : `Cadastro de ${initialTitle}`;
+  const description = initialData
+    ? `Editar ${initialTitle}`
+    : `Adicionar novo ${initialTitle}`;
   const action = initialData ? "Atualizar" : "Salvar";
-  const session = useSession();
+  const { business } = useBusiness();
 
-  const token = session.data?.user?.accessToken
-
-  const defaultValues = initialData
-    ? initialData
-    : {
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-      };
+  const defaultValues = {
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  };
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        name: initialData.user.name,
+        email: initialData.user.email,
+        phone: initialData.user.phone,
+        address: initialData.user.address,
+      });
+    }
+  }, [initialData, form]);
+
   const onSubmit = async (data: ProductFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
-        await api.patch(`/business/marieju/member/${initialData._id}`, data);
+        await api.patch(
+          `/business/${business.slug}/member/${initialData.id}`,
+          data,
+        );
         toast({
           title: "Atualização.",
           description: "Cliente atualizado com sucesso.",
-          style: {  
+          style: {
             backgroundColor: "#4BB543",
             color: "#fff",
             fontWeight: "bold",
           },
         });
       } else {
-        await api.post(`/business/marieju/member`, data);
+        await api.post(`/business/${business.slug}/member`, data);
         toast({
           title: "Cadastro.",
           description: "Cliente cadastrado com sucesso.",
-          style: {  
+          style: {
             backgroundColor: "#4BB543",
             color: "#fff",
             fontWeight: "bold",
@@ -96,7 +106,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({
       }
       router.refresh();
       router.push(`/dashboard/client`);
-     
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -113,27 +122,26 @@ export const MemberForm: React.FC<MemberFormProps> = ({
       setLoading(true);
       //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
       router.refresh();
-      router.push(`/${params.storeId}/products`);
+      // router.push(`/${params.storeId}/products`);
     } catch (error: any) {
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
+        <Link href={"/dashboard/client"} className="flex ">
+          <ArrowLeft />
+          Voltar
+        </Link>
+        {/* {initialData && (
+          // <Button disabled={loading} variant="destructive" size="sm">
+          //   <Trash className="h-4 w-4" />
+          // </Button>
+        )} */}
       </div>
       <Separator />
       <Form {...form}>
@@ -149,10 +157,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={loading}
-                      {...field}
-                    />
+                    <Input disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -165,10 +170,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
                 <FormItem>
                   <FormLabel>E-mail</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={loading}
-                      {...field}
-                    />
+                    <Input disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,7 +183,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({
                 <FormItem>
                   <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input  disabled={loading} {...field} />
+                    <Input disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -194,24 +196,17 @@ export const MemberForm: React.FC<MemberFormProps> = ({
                 <FormItem>
                   <FormLabel>Endereço</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={loading}
-                      {...field}
-                    />
+                    <Input disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-         
-          <div className="flex flex-col md:flex-row align-items justify-between">
-        
+
+          <div className="flex align-items justify-end">
             <Button className="mb-2" type="submit">
               {action}
-            </Button>
-            <Button variant="destructive" className="" type="submit">
-              Cancelar
             </Button>
           </div>
         </form>

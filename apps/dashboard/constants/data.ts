@@ -143,6 +143,12 @@ export const navItems: NavItem[] = [
     icon: "moon",
     label: "user",
   },
+  {
+    title: "Salões",
+    href: "/dashboard/employee",
+    icon: "logo",
+    label: "bussiness",
+  },
   // {
   //   title: "Profile",
   //   href: "/dashboard/profile",

@@ -8,19 +8,19 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(uuid())
+  id            String        @id @default(uuid())
   name          String?
-  email         String     @unique
+  email         String
   phone         String?
   address       String?
-  passwordHash  String?    @map("password_hash")
-  active        Boolean?   @default(true)
-  avatarUrl     String?    @map("avatar_url")
+  passwordHash  String?       @map("password_hash")
+  active        Boolean?      @default(true)
+  avatarUrl     String?       @map("avatar_url")
   tokens        Token[]
   accounts      Account[]
   owns_business Business[]
   members       Member[]
-  appointments     Appointment[]
+  appointments  Appointment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -66,13 +66,13 @@ enum Role {
 }
 
 model Member {
-  id         String     @id @default(uuid())
-  role       Role       @default(CLIENT)
-  business   Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  businessId String     @map("business_id")
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String     @map("user_id")
-  appointments  Appointment[]
+  id           String        @id @default(uuid())
+  role         Role          @default(CLIENT)
+  business     Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId   String        @map("business_id")
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String        @map("user_id")
+  appointments Appointment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -82,20 +82,20 @@ model Member {
 }
 
 model Business {
-  id                        String     @id @default(uuid())
+  id                        String        @id @default(uuid())
   name                      String
-  slug                      String     @unique
-  domain                    String?    @unique
-  shouldAttachUsersByDomain Boolean    @default(false) @map("should_attach_users_by_domain")
-  avatarUrl                 String?    @map("avatar_url")
-  owner                     User       @relation(fields: [ownerId], references: [id])
-  ownerId                   String     @map("owner_id")
-  startWorkHour             Int       @default(8) @map("start_work_hour")
-  endWorkHour               Int       @default(18) @map("end_work_hour")
+  slug                      String        @unique
+  domain                    String?       @unique
+  shouldAttachUsersByDomain Boolean       @default(false) @map("should_attach_users_by_domain")
+  avatarUrl                 String?       @map("avatar_url")
+  owner                     User          @relation(fields: [ownerId], references: [id])
+  ownerId                   String        @map("owner_id")
+  startWorkHour             Int           @default(8) @map("start_work_hour")
+  endWorkHour               Int           @default(18) @map("end_work_hour")
   members                   Member[]
   products                  Product[]
   services                  Service[]
-  appointments                 Appointment[]
+  appointments              Appointment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -108,12 +108,13 @@ model Product {
   name        String
   description String
   price       Decimal        @db.Decimal(10, 2)
+  quantity    Int?           @default(0)
   business    Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
   businessId  String         @map("business_id")
   images      ProductImage[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
 
   @@unique([businessId, name])
   @@map("products")
@@ -129,12 +130,12 @@ model ProductImage {
 }
 
 model Service {
-  id          String     @id @default(uuid())
-  name        String
-  description String     @db.VarChar(500)
-  business    Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  businessId  String     @map("business_id")
-  appointments   Appointment[]
+  id           String        @id @default(uuid())
+  name         String
+  description  String        @db.VarChar(500)
+  business     Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId   String        @map("business_id")
+  appointments Appointment[]
 
   @@unique([businessId, name])
   @@map("services")
@@ -148,21 +149,21 @@ enum AppoinymentStatus {
 }
 
 model Appointment {
-  id           String   @id @default(uuid())
-  observations String?  @db.VarChar(500)
-  client       Member   @relation(fields: [clientId], references: [id])
-  clientId     String   @map("member_id")
-  service      Service  @relation(fields: [serviceId], references: [id])
-  serviceId    String   @map("service_id")
-  owner        User     @relation(fields: [ownerId], references: [id])
-  ownerId      String   @map("user_id")
-  business     Business @relation(fields: [businessId], references: [id])
-  businessId   String   @map("business_id")
+  id           String            @id @default(uuid())
+  observations String?           @db.VarChar(500)
+  client       Member            @relation(fields: [clientId], references: [id])
+  clientId     String            @map("member_id")
+  service      Service           @relation(fields: [serviceId], references: [id])
+  serviceId    String            @map("service_id")
+  owner        User              @relation(fields: [ownerId], references: [id])
+  ownerId      String            @map("user_id")
+  business     Business          @relation(fields: [businessId], references: [id])
+  businessId   String            @map("business_id")
   date         DateTime
   status       AppoinymentStatus @default(PENDING)
-  active       Boolean  @default(true)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  active       Boolean           @default(true)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
 
   @@map("appointments")
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import BreadCrumb from "@/components/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -10,6 +12,9 @@ import { api } from "@/lib/axios";
 import { getServerSession } from "next-auth";
 import { columns } from "./components/client-tables/columns";
 import { authOptions } from "@/lib/auth-options";
+import { use, useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useBusiness } from "@/store/business";
 
 const breadcrumbItems = [{ title: "Clientes", link: "/dashboard/client" }];
 
@@ -19,26 +24,43 @@ type paramsProps = {
   };
 };
 
-export default async function page({ searchParams }: paramsProps) {
+export default function page({ searchParams }: paramsProps) {
   const page = Number(searchParams.page) || 1;
   const pageLimit = Number(searchParams.limit) || 10;
-  const search = searchParams.search ? searchParams.search.toString() : ''  
+  const search = searchParams.search ? searchParams.search.toString() : "";
   const offset = (page - 1) * pageLimit;
-  const session = await getServerSession(authOptions);
-  api.defaults.headers["Authorization"] = `Bearer ${session?.user?.accessToken}`;
-  const res = await api.get(`business/marieju/members?page=${page}&limit${offset}&search=${search}`);
-  const members =  res.data.members;
-  const totalUsers = members.meta.total; //1000
-  const pageCount = Math.ceil(totalUsers / offset);
-  const clientes: any[] = members.data.map((member: any) => ({
-      id: member.id,
-      name: member.user.name,
-      email: member.user.email,
-      phone: member.user.phone,
+  const [clients, setClients] = useState<any[]>([]);
+  const { business } = useBusiness();
+
+  const fetchClients = useCallback(async () => {
+    if (business.slug) {
+      const response = await api.get(
+        `business/${business.slug}/members?page=${page}&limit${offset}&search=${search}`,
+      );
+      const { members } = response.data;
+      const membersData = members.data.filter(
+        (member: any) => member.role === "CLIENT",
+      );
+      console.log("membersData", membersData);
+      setClients(membersData);
     }
-  ));
+  }, [business]);
 
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
 
+  const members: any = clients.length ? clients : [];
+  const totalUsers = clients.length; //1000
+  const pageCount = Math.ceil(totalUsers / offset);
+  const clientes: any[] = clients.length
+    ? members?.map((member: any) => ({
+        id: member.id,
+        name: member.user.name,
+        email: member.user.email,
+        phone: member.user.phone,
+      }))
+    : [];
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
@@ -46,7 +68,7 @@ export default async function page({ searchParams }: paramsProps) {
 
         <div className="flex items-start justify-between">
           <Heading
-            title={`Clientes (${members.data.length})`}
+            title={`Clientes (${clientes.length})`}
             description="Lista de clientes cadastrados no sistema."
           />
 

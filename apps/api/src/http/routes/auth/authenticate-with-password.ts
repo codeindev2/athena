@@ -22,6 +22,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
         response: {
           201: z.object({
             user: z.object({
+              sub: z.string(),
               name: z.string(),
               email: z.string().email(),
               image: z.string().nullish(),
@@ -34,7 +35,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
     async (request, reply) => {
       const { email, password } = request.body
 
-      const userFromEmail = await prisma.user.findUnique({
+      const userFromEmail = await prisma.user.findFirst({
         select: {
           id: true,
           name: true,
@@ -85,6 +86,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
 
       return reply.status(201).send({
         user: {
+          sub: userFromEmail.id,
           name: userFromEmail.name!,
           email: userFromEmail.email,
           image: userFromEmail.avatarUrl,

@@ -1,11 +1,9 @@
 import { MemberForm } from "@/components/forms/member-form";
 
 type ClientFormProps = {
-    initialData: any,
-}
+  initialData: any;
+};
 
 export function ClientForm(props: ClientFormProps) {
-    return (
-        <MemberForm initialData={props.initialData} title="cliente"/>
-    )
+  return <MemberForm initialData={props.initialData} title="cliente" />;
 }

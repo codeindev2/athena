@@ -14,10 +14,42 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent} from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
 import { BusinessSelect } from "./_components/select-business";
+import { useCallback, useEffect, useState } from "react";
+import { api } from "@/lib/axios";
+import { useBusiness } from "@/store/business";
+import { da } from "date-fns/locale";
 
 export default function page() {
-
+  const [ clients , setClients ] = useState([])
+  const [ appointments, setAppointments ] = useState([])
+  const { business } = useBusiness()
   const { data: session } = useSession();
+  
+  api.defaults.headers.common['Authorization'] = `Bearer ${session?.user.accessToken}`
+
+  const fetchClients = useCallback(async () => {
+
+    if(business.slug) {
+      const response = await api.get(`business/${business.slug}/members`)
+      const { members } = response.data
+      const membersData = members.data.filter((member: any) => member.role === 'CLIENT')
+      setClients(membersData)
+
+      const appointmentsResponse = await api.post(`business/${business.slug}/appointments`, {
+        user_id: session?.user.sub,
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        day: new Date().getDate()
+      })
+      setAppointments(appointmentsResponse.data.appointments)
+    }
+   
+  },[business])
+
+  useEffect(() => {
+     fetchClients()
+  }, [fetchClients])
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -52,13 +84,13 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
+                  <div className="text-2xl font-bold">{clients.length}</div>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Subscriptions
+                    Agendamentos
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -76,9 +108,9 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2350</div>
+                  <div className="text-2xl font-bold">{appointments.length}</div>
                   <p className="text-xs text-muted-foreground">
-                    +180.1% from last month
+                    Agendamentos do mês
                   </p>
                 </CardContent>
               </Card>
