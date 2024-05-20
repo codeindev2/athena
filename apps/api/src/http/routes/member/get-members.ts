@@ -1,3 +1,4 @@
+import { roleSchema } from '@saas/auth'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -27,6 +28,7 @@ export async function getMembers(app: FastifyInstance) {
             page: z.coerce.number().default(1),
             limit: z.coerce.number().default(10),
             search: z.string().optional(),
+            role: roleSchema.optional().default('CLIENT'),
           }),
           response: {
             200: z.object({

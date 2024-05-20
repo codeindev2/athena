@@ -9,10 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
+import { GET_CLIENTS } from "@/constants/function-name";
 import { api } from "@/lib/axios";
+import { queryClient } from "@/lib/react-query";
 import { useBusiness } from "@/store/business";
 import { CalendarDaysIcon, Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface CellActionProps {
@@ -39,6 +41,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           fontWeight: "bold",
         },
       });
+      // usar o queryClient para invalidar a query no cache
+      queryClient.invalidateQueries({
+        queryKey: [GET_CLIENTS],
+      });
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -48,10 +54,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     } finally {
       setLoading(false);
       setOpen(false);
-      router.refresh();
-      // if (typeof window !== "undefined") {
-      //   window.location.reload();
-      // }
       router.prefetch("/dashboard/client");
     }
   };

@@ -1,26 +1,31 @@
 "use client";
 
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
+import { ClientTable } from "./components/client-tables/table";
+import { columns } from "./components/client-tables/columns";
 import BreadCrumb from "@/components/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { ClientTable } from "./components/client-tables/table";
-import { api } from "@/lib/axios";
-import { getServerSession } from "next-auth";
-import { columns } from "./components/client-tables/columns";
-import { authOptions } from "@/lib/auth-options";
-import { use, useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useBusiness } from "@/store/business";
-
-const breadcrumbItems = [{ title: "Clientes", link: "/dashboard/client" }];
+import { GET_CLIENTS } from "@/constants/function-name";
+import { fetchClients } from "@/functions/clients";
 
 type paramsProps = {
   searchParams: {
     [key: string]: string | string[] | undefined;
+  };
+};
+
+type Member = {
+  id: string;
+  user: {
+    name: string;
+    email: string;
+    phone: string;
   };
 };
 
@@ -29,38 +34,26 @@ export default function page({ searchParams }: paramsProps) {
   const pageLimit = Number(searchParams.limit) || 10;
   const search = searchParams.search ? searchParams.search.toString() : "";
   const offset = (page - 1) * pageLimit;
-  const [clients, setClients] = useState<any[]>([]);
-  const { business } = useBusiness();
+  const breadcrumbItems = [{ title: "Clientes", link: "/dashboard/client" }];
+  const { business } = useBusiness() as any;
 
-  const fetchClients = useCallback(async () => {
-    if (business.slug) {
-      const response = await api.get(
-        `business/${business.slug}/members?page=${page}&limit${offset}&search=${search}`,
-      );
-      const { members } = response.data;
-      const membersData = members.data.filter(
-        (member: any) => member.role === "CLIENT",
-      );
-      console.log("membersData", membersData);
-      setClients(membersData);
-    }
-  }, [business]);
+  const { data: clients, isLoading } = useQuery({
+    queryKey: [GET_CLIENTS, business.slug, page, pageLimit, search],
+    queryFn: () =>
+      fetchClients({ slug: business.slug, page, limit: pageLimit, search }),
+  });
 
-  useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
-
-  const members: any = clients.length ? clients : [];
-  const totalUsers = clients.length; //1000
-  const pageCount = Math.ceil(totalUsers / offset);
-  const clientes: any[] = clients.length
-    ? members?.map((member: any) => ({
+  const total = !isLoading ? clients.members.meta.total : 0;
+  const pageCount = Math.ceil(total / offset);
+  const clientes = !isLoading
+    ? clients.members.data.map((member: Member) => ({
         id: member.id,
         name: member.user.name,
         email: member.user.email,
         phone: member.user.phone,
       }))
     : [];
+
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
@@ -85,7 +78,7 @@ export default function page({ searchParams }: paramsProps) {
           searchKey="name"
           pageNo={page}
           columns={columns}
-          totalUsers={totalUsers}
+          totalUsers={total}
           data={clientes}
           pageCount={pageCount}
         />
