@@ -100,6 +100,7 @@ export async function getMembers(app: FastifyInstance) {
           },
           where: {
             businessId: business.id,
+            role: request.query.role,
             OR: [
               {
                 user: {
@@ -133,6 +134,7 @@ export async function getMembers(app: FastifyInstance) {
         const total = await prisma.member.count({
           where: {
             businessId: business.id,
+            role: request.query.role,
             AND: [
               {
                 user: {

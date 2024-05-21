@@ -12,6 +12,9 @@ import {
 } from 'fastify-type-provider-zod'
 
 import { errorHandler } from './error-handler'
+import { createAppointment } from './routes/appointment/create-appointment'
+import { listAppointments } from './routes/appointment/list-appointments'
+import { listEmployeeAvailableHours } from './routes/appointment/list-employee-day-available-hours'
 import { authenticateWithGithub } from './routes/auth/authenticate-with-github'
 import { authenticateWithPassword } from './routes/auth/authenticate-with-password'
 import { createAccount } from './routes/auth/create-account'
@@ -34,14 +37,11 @@ import { deleteProduct } from './routes/product/delete-product'
 import { getProduct } from './routes/product/get-product'
 import { getProducts } from './routes/product/get-products'
 import { updateProduct } from './routes/product/update-product'
-import { createAppointment } from './routes/appointment/create-appointment'
 import { createService } from './routes/service/create-service'
 import { deleteService } from './routes/service/delete-service'
 import { getService } from './routes/service/get-service'
 import { getServices } from './routes/service/get-services'
 import { updateService } from './routes/service/update-service'
-import { listAppointments } from './routes/appointment/list-appointments'
-import { listEmployeeAvailableHours } from './routes/appointment/list-employee-day-available-hours'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 

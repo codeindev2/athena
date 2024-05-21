@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
@@ -11,44 +12,66 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent} from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
 import { BusinessSelect } from "./_components/select-business";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { useBusiness } from "@/store/business";
-import { da } from "date-fns/locale";
+import { useQuery } from "@tanstack/react-query";
+
+export async function fetchBusiness() {
+  const response = await api.get("/business");
+  return response.data;
+}
 
 export default function page() {
-  const [ clients , setClients ] = useState([])
-  const [ appointments, setAppointments ] = useState([])
-  const { business } = useBusiness()
+  const [clients, setClients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const { business, setBusiness } = useBusiness();
   const { data: session } = useSession();
-  
-  api.defaults.headers.common['Authorization'] = `Bearer ${session?.user.accessToken}`
+
+  api.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${session?.user.accessToken}`;
+
+  const { data: businessData } = useQuery({
+    queryKey: ["getBusiness"],
+    queryFn: () => fetchBusiness(),
+  });
+
+  if (businessData && businessData.business!.length && !business.slug) {
+    setBusiness({
+      slug: businessData.business[0].slug,
+      name: businessData.business[0].name,
+    });
+  }
 
   const fetchClients = useCallback(async () => {
+    if (business.slug) {
+      const response = await api.get(`business/${business.slug}/members`);
+      const { members } = response.data;
+      const membersData = members.data.filter(
+        (member: any) => member.role === "CLIENT",
+      );
+      setClients(membersData);
 
-    if(business.slug) {
-      const response = await api.get(`business/${business.slug}/members`)
-      const { members } = response.data
-      const membersData = members.data.filter((member: any) => member.role === 'CLIENT')
-      setClients(membersData)
-
-      const appointmentsResponse = await api.post(`business/${business.slug}/appointments`, {
-        user_id: session?.user.sub,
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate()
-      })
-      setAppointments(appointmentsResponse.data.appointments)
+      const appointmentsResponse = await api.post(
+        `business/${business.slug}/appointments`,
+        {
+          user_id: session?.user.sub,
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          day: new Date().getDate(),
+        },
+      );
+      setAppointments(appointmentsResponse.data.appointments);
     }
-   
-  },[business])
+  }, [business, session?.user.sub]);
 
   useEffect(() => {
-     fetchClients()
-  }, [fetchClients])
+    fetchClients();
+  }, [fetchClients]);
 
   return (
     <ScrollArea className="h-full">
@@ -68,47 +91,13 @@ export default function page() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Clientes 
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{clients.length}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
                     Agendamentos
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{appointments.length}</div>
+                  <div className="text-2xl font-bold">
+                    {appointments.length}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     Agendamentos do mês
                   </p>
@@ -116,56 +105,47 @@ export default function page() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <rect width="20" height="14" x="2" y="5" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
+                  <CardTitle className="text-sm font-medium">
+                    Clientes
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
+                  <div className="text-2xl font-bold">{clients.length}</div>
                   <p className="text-xs text-muted-foreground">
-                    +19% from last month
+                    Clientes cadastrados
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Produtos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">0</div>
+                  <p className="text-xs text-muted-foreground">
+                    Produtos cadastrados
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Active Now
+                    Serviços
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
+                  <div className="text-2xl font-bold">0</div>
                   <p className="text-xs text-muted-foreground">
-                    +201 since last hour
+                    Serviços cadastrados
                   </p>
                 </CardContent>
               </Card>
             </div>
             {/* <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7"> */}
-              {/* <Card className="col-span-4">
+            {/* <Card className="col-span-4">
                 <CardHeader>
                   <CardTitle>Informações</CardTitle>
                 </CardHeader>
@@ -173,17 +153,15 @@ export default function page() {
                   <Overview />
                 </CardContent>
               </Card> */}
-              <Card className="w-full col-span-4 md:col-span-3">
-                <CardHeader>
-                  <CardTitle>Agenda</CardTitle>
-                  <CardDescription>
-                    Lista de tarefas para o dia
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales />
-                </CardContent>
-              </Card>
+            <Card className="w-full col-span-4 md:col-span-3">
+              <CardHeader>
+                <CardTitle>Agenda</CardTitle>
+                <CardDescription>Lista de tarefas para o dia</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RecentSales />
+              </CardContent>
+            </Card>
             {/* </div> */}
           </TabsContent>
         </Tabs>

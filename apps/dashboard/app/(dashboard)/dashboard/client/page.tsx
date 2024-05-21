@@ -43,7 +43,7 @@ export default function page({ searchParams }: paramsProps) {
       fetchClients({ slug: business.slug, page, limit: pageLimit, search }),
   });
 
-  const total = !isLoading ? clients.members.meta.total : 0;
+  const total = clients?.members?.meta.total || 0;
   const pageCount = Math.ceil(total / offset);
   const clientes = !isLoading
     ? clients.members.data.map((member: Member) => ({
