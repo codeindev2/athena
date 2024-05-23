@@ -1,13 +1,15 @@
+import { id } from "date-fns/locale";
 import { z } from "zod";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
-const businessSchema = z.object({
+export const businessSchema = z.object({
+    id: z.string(),
     slug: z.string(),
     name: z.string(),
 });
 
-type BusinessData = z.infer<typeof businessSchema>;
+export type BusinessData = z.infer<typeof businessSchema>;
 
 type BusinessStore = {
     business: BusinessData
@@ -18,6 +20,7 @@ export const useBusiness = create<BusinessStore>()(
     persist(
       (set) => ({
         business: {
+          id: "",
           slug: "",
           name: "",
         },

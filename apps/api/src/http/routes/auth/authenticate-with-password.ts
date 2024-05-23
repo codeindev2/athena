@@ -43,6 +43,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
           avatarUrl: true,
           owns_business: {
             select: {
+              id: true,
               name: true,
               slug: true,
             },

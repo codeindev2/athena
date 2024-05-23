@@ -1,1 +1,9 @@
 export const GET_CLIENTS = "get_clients";
+export const GET_MEMBER = "GET_MEMBER";
+export const GET_EMPLOYEES = "GET_EMPLOYEES";
+export const GET_SERVICES = "GET_SERVICES";
+export const GET_BUSINESS = "GET_BUSINESS";
+export const GET_BUSINESSES = "GET_BUSINESSES";
+export const GET_APPOINTMENTS = "GET_APPOINTMENTS";
+export const GET_APPOINTMENT = "GET_APPOINTMENT";
+export const GET_APPOINTMENT_BY_EMPLOYEE = "GET_APPOINTMENT_BY_EMPLOYEE";

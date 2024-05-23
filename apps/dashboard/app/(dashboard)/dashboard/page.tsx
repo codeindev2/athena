@@ -42,6 +42,7 @@ export default function page() {
 
   if (businessData && businessData.business!.length && !business.slug) {
     setBusiness({
+      id: businessData.business[0].id,
       slug: businessData.business[0].slug,
       name: businessData.business[0].name,
     });

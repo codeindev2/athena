@@ -26,10 +26,10 @@ const formSchema = z.object({
   slug: z.string(),
 });
 export function BusinessSelect() {
-  const { business, setBusiness} = useBusiness();
+  const { business, setBusiness } = useBusiness();
   const [companies, setCompanies] = useState<Business[]>([]);
   const { data: session } = useSession();
-         
+
   api.defaults.headers.common[
     "Authorization"
   ] = `Bearer ${session?.user.accessToken}`;
@@ -43,8 +43,11 @@ export function BusinessSelect() {
   }, []);
 
   function handleSelectChange(name: string) {
+    const businessId = companies.find((company) => company.name === name);
     const slug = createSlug(name);
+    if (!businessId) return;
     setBusiness({
+      id: businessId?.id,
       slug,
       name,
     });
@@ -56,42 +59,41 @@ export function BusinessSelect() {
 
   useEffect(() => {
     getBusiness();
-    form.setValue('slug', business.name);
+    form.setValue("slug", business.name);
   }, [getBusiness, form, business]);
-
 
   return (
     <Form {...form}>
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <Select
-                onValueChange={(name) => handleSelectChange(name)}
-                value={field?.value}
-                defaultValue={field?.value}
-              >
-                <FormControl >
-                  <SelectTrigger onChange={() => console.log(field)}>
-                    <SelectValue
-                      defaultValue={field.value}
-                      placeholder="Selecione uma empresa"
-                    />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {companies?.map((company) => (
-                    <SelectItem key={company.slug} value={String(company.name)} >
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <FormField
+        control={form.control}
+        name="slug"
+        render={({ field }) => (
+          <FormItem>
+            <Select
+              onValueChange={(name) => handleSelectChange(name)}
+              value={field?.value}
+              defaultValue={field?.value}
+            >
+              <FormControl>
+                <SelectTrigger onChange={() => console.log(field)}>
+                  <SelectValue
+                    defaultValue={field.value}
+                    placeholder="Selecione uma empresa"
+                  />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {companies?.map((company) => (
+                  <SelectItem key={company.id} value={String(company.name)}>
+                    {company.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </Form>
   );
 }

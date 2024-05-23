@@ -117,18 +117,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({
     }
   };
 
-  const onDelete = async () => {
-    try {
-      setLoading(true);
-      //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
-      // router.push(`/${params.storeId}/products`);
-    } catch (error: any) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -137,11 +125,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({
           <ArrowLeft />
           Voltar
         </Link>
-        {/* {initialData && (
-          // <Button disabled={loading} variant="destructive" size="sm">
-          //   <Trash className="h-4 w-4" />
-          // </Button>
-        )} */}
       </div>
       <Separator />
       <Form {...form}>

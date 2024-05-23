@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
 import { auth } from '@/http/middlewares/auth'
+
 import { createScheduleSchema } from './schema/appointment'
 import { createAppointmentUseCase } from './use-cases/create-appointment.usecase'
 
@@ -30,7 +31,13 @@ export const createAppointment = async (app: FastifyInstance) => {
       },
       handler: async (req, reply) => {
         const { clientId, serviceId, ownerId, businessId, date } = req.body
-        await createAppointmentUseCase({ clientId, serviceId, ownerId, businessId, date })
+        await createAppointmentUseCase({
+          clientId,
+          serviceId,
+          ownerId,
+          businessId,
+          date,
+        })
         reply.send({ message: 'Agendamento criado com sucesso' })
       },
     })

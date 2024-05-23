@@ -16,6 +16,7 @@ import { useBusiness } from "@/store/business";
 import { CalendarDaysIcon, Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AppointmentModal } from "../appointment-modal";
 
 interface CellActionProps {
   data: any;
@@ -24,6 +25,8 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [clientId, setClientId] = useState("");
+  const [openAppontmentModal, setOpenAppointmentModal] = useState(false);
   const router = useRouter();
   const { business } = useBusiness();
   const onConfirm = async () => {
@@ -66,6 +69,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={loading}
       />
+      <AppointmentModal
+        isOpen={openAppontmentModal}
+        onClose={() => setOpenAppointmentModal(false)}
+        loading={loading}
+        clientId={clientId}
+      />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -75,7 +84,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            onClick={() => {
+              setOpenAppointmentModal(true), setClientId(data.id);
+            }}
+          >
             <CalendarDaysIcon className="mr-2 h-4 w-4" /> Agendar
           </DropdownMenuItem>
           <DropdownMenuItem
