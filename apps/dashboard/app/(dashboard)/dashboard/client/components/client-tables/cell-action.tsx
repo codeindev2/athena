@@ -14,7 +14,6 @@ import { api } from "@/lib/axios";
 import { queryClient } from "@/lib/react-query";
 import { useBusiness } from "@/store/business";
 import { CalendarDaysIcon, Edit, MoreHorizontal, Trash } from "lucide-react";
-import App from "next/app";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppointmentDrawerDialog } from "../appointment-drawer-dialog";

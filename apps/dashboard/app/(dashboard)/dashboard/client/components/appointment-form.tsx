@@ -37,8 +37,7 @@ import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import ptBR from "date-fns/locale/pt-BR";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { on } from "events";
+import { useQuery } from "@tanstack/react-query";
 
 const formSchema = z.object({
   serviceId: z.string().min(3, { message: "Serviço é obrigatório" }),
