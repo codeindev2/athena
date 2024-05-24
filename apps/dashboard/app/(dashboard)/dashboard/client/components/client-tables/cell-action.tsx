@@ -14,9 +14,10 @@ import { api } from "@/lib/axios";
 import { queryClient } from "@/lib/react-query";
 import { useBusiness } from "@/store/business";
 import { CalendarDaysIcon, Edit, MoreHorizontal, Trash } from "lucide-react";
+import App from "next/app";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AppointmentModal } from "../appointment-modal";
+import { AppointmentDrawerDialog } from "../appointment-drawer-dialog";
 
 interface CellActionProps {
   data: any;
@@ -69,13 +70,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={loading}
       />
-      <AppointmentModal
+      <AppointmentDrawerDialog
         isOpen={openAppontmentModal}
         onClose={() => setOpenAppointmentModal(false)}
         loading={loading}
         clientId={clientId}
       />
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={true}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
@@ -94,7 +95,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/client/${data.id}`)}
           >
-            <Edit className="mr-2 h-4 w-4" /> Atualizar
+            <Edit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Excluir
