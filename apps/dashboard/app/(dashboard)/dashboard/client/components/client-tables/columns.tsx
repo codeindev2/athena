@@ -33,10 +33,6 @@ export const columns: ColumnDef<Employee>[] = [
     header: "EMAIL",
   },
   {
-    accessorKey: "phone",
-    header: "TELEFONE",
-  },
-  {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
   },

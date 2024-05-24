@@ -44,12 +44,20 @@ export const listAppointmentsUseCase = async ({
       },
     },
     where: {
-      businessId,
-      ownerId: userId,
-      date: {
-        gte: new Date(`${year}-${parsedMonth}-${startDay}`),
-        lte: new Date(`${year}-${parsedMonth}-${lastDay}`),
-      },
+      AND: [
+        {
+          businessId,
+        },
+        {
+          ownerId: userId,
+        },
+        {
+          date: {
+            gte: new Date(`${year}-${parsedMonth}-${startDay}`),
+            lte: new Date(`${year}-${parsedMonth}-${lastDay}`),
+          },
+        },
+      ],
     },
   })
 

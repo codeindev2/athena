@@ -55,12 +55,13 @@ export default function page() {
       const membersData = members.data.filter(
         (member: any) => member.role === "CLIENT",
       );
+
       setClients(membersData);
 
       const appointmentsResponse = await api.post(
         `business/${business.slug}/appointments`,
         {
-          user_id: session?.user.sub,
+          userId: session?.user.sub,
           year: new Date().getFullYear(),
           month: new Date().getMonth() + 1,
           day: new Date().getDate(),
@@ -69,6 +70,8 @@ export default function page() {
       setAppointments(appointmentsResponse.data.appointments);
     }
   }, [business, session?.user.sub]);
+
+  console.log(appointments);
 
   useEffect(() => {
     fetchClients();

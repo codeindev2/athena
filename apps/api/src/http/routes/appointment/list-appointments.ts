@@ -1,10 +1,11 @@
+import { getDaysInMonth } from 'date-fns'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
 import { auth } from '@/http/middlewares/auth'
+
 import { listAppointmentsUseCase } from './use-cases/list-appointments.usecase'
-import { getDaysInMonth, parseISO } from 'date-fns'
 
 export const listAppointments = async (app: FastifyInstance) => {
   app
@@ -19,7 +20,7 @@ export const listAppointments = async (app: FastifyInstance) => {
           slug: z.string(),
         }),
         body: z.object({
-          user_id: z.string(),
+          userId: z.string(),
           year: z.number(),
           month: z.number(),
           day: z.number(),
@@ -28,23 +29,23 @@ export const listAppointments = async (app: FastifyInstance) => {
           200: z.object({
             appointments: z.array(
               z.object({
-              id: z.string(),
-              date: z.string(),
-              hour: z.string(),
-              client: z.object({
                 id: z.string(),
-                name: z.string(),
+                date: z.string(),
+                hour: z.string(),
+                client: z.object({
+                  id: z.string(),
+                  name: z.string(),
+                }),
+                service: z.object({
+                  id: z.string(),
+                  name: z.string(),
+                }),
+                employee: z.object({
+                  id: z.string(),
+                  name: z.string(),
+                }),
               }),
-              service: z.object({
-                id: z.string(),
-                name: z.string(),
-              }),
-              employee: z.object({
-                id: z.string(),
-                name: z.string(),
-              }),
-            })
-          )
+            ),
           }),
           404: z.object({
             message: z.string(),
@@ -53,26 +54,33 @@ export const listAppointments = async (app: FastifyInstance) => {
       },
       handler: async (request, reply) => {
         const { slug } = request.params
-        const { user_id, year, month, day } = request.body
-        const { business,  } = await request.getUserMembership(slug)
+        const { userId, year, month, day } = request.body
+        const { business } = await request.getUserMembership(slug)
 
-        const hourStart = 8;
+        // const hourStart = 8
 
-        const eachHourArray = Array.from(
-          { length: 10 },
-          (_, index) => index + hourStart,
-        );
+        // const eachHourArray = Array.from(
+        //   { length: 10 },
+        //   (_, index) => index + hourStart,
+        // )
 
-        const numberOfDaysInMonth = getDaysInMonth(new Date(year, month - 1));
+        const numberOfDaysInMonth = getDaysInMonth(new Date(year, month - 1))
         const lastDay = numberOfDaysInMonth
 
-        const appointments = await listAppointmentsUseCase({ user_id, year, month, startDay: day, lastDay, businessId: business.id})
+        const appointments = await listAppointmentsUseCase({
+          userId,
+          year,
+          month,
+          startDay: day,
+          lastDay,
+          businessId: business.id,
+        })
 
-        const response = appointments.map(appointment => {
+        const response = appointments.map((appointment) => {
           const date = new Intl.DateTimeFormat('pt-BR', {
             year: 'numeric',
             month: '2-digit',
-            day: '2-digit'
+            day: '2-digit',
           }).format(appointment.date)
 
           const hour = new Intl.DateTimeFormat('pt-BR', {
@@ -81,7 +89,7 @@ export const listAppointments = async (app: FastifyInstance) => {
             second: '2-digit',
             hour12: false,
           }).format(appointment.date)
-    
+
           return {
             id: appointment.id,
             date,
@@ -100,7 +108,7 @@ export const listAppointments = async (app: FastifyInstance) => {
             },
           }
         })
-        reply.send({ appointments: response, })
+        reply.send({ appointments: response })
       },
     })
 }

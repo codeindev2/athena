@@ -42,11 +42,20 @@ export const listEmployeeAvailableHoursUseCase = async ({
       },
     },
     where: {
-      businessId,
-      ownerId: userId,
-      date: {
-        gt: new Date(`${year}-${parsedMonth}-${startDay}`),
-      },
+      AND: [
+        {
+          businessId,
+        },
+
+        {
+          ownerId: userId,
+        },
+        {
+          date: {
+            gt: new Date(`${year}-${parsedMonth}-${startDay}`),
+          },
+        },
+      ],
     },
   })
 

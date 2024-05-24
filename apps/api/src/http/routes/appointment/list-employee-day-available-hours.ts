@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { addHours, getHours, isAfter } from 'date-fns'
+import { getHours, isAfter } from 'date-fns'
 import { format } from 'date-fns-tz'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -63,6 +63,9 @@ export const listEmployeeAvailableHours = async (app: FastifyInstance) => {
           businessId: business.id,
         })
 
+        if (!appointments.length) {
+          reply.send({ appointments: [], message: 'No appointments found' })
+        }
         const availability = eachHourArray.map((hour) => {
           const hasAppointmentInHour = appointments.find((appointment: any) => {
             const addedDate = appointment.date
