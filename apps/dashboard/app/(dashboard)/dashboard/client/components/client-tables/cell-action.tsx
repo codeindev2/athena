@@ -75,7 +75,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         loading={loading}
         clientId={clientId}
       />
-      <DropdownMenu modal={true}>
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>

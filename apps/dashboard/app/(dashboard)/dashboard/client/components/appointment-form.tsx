@@ -50,13 +50,15 @@ type ServiceForm = z.infer<typeof formSchema>;
 
 type AppointmentFormParam = {
   className?: string;
+  isOpen: boolean;
   onClose: () => void;
   clientId: string;
 };
 
-export default function AppointmentForm({
+export function AppointmentForm({
   className,
   onClose,
+  isOpen,
   clientId,
 }: AppointmentFormParam) {
   const { business } = useBusiness();
@@ -135,7 +137,6 @@ export default function AppointmentForm({
           fontWeight: "bold",
         },
       });
-      onClose();
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -144,7 +145,7 @@ export default function AppointmentForm({
       });
     } finally {
       onClose();
-      form.reset();
+      window.location.reload();
     }
   };
   return (
@@ -229,7 +230,7 @@ export default function AppointmentForm({
               render={({ field }) => (
                 <FormItem className="flex flex-col pt-1">
                   <FormLabel>Dia</FormLabel>
-                  <Popover modal={true}>
+                  <Popover modal={isOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
