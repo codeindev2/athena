@@ -32,7 +32,7 @@ export default function Page() {
   return (
     <div className="flex-1 space-y-4 p-8">
       <BreadCrumb items={breadcrumbItems} />
-      <ClientForm initialData={client} />
+      <ClientForm initialData={client} title="cliente" />
     </div>
   );
 }
