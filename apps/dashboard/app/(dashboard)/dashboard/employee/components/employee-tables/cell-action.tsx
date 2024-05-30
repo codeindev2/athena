@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
-import { GET_CLIENTS } from "@/constants/function-name";
+import { GET_CLIENTS, GET_EMPLOYEES } from "@/constants/function-name";
 import { api } from "@/lib/axios";
 import { queryClient } from "@/lib/react-query";
 import { useBusiness } from "@/store/business";
@@ -43,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       });
       // usar o queryClient para invalidar a query no cache
       queryClient.invalidateQueries({
-        queryKey: [GET_CLIENTS],
+        queryKey: [GET_EMPLOYEES],
       });
     } catch (error: any) {
       toast({

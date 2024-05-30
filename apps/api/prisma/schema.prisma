@@ -151,11 +151,11 @@ enum AppoinymentStatus {
 model Appointment {
   id           String            @id @default(uuid())
   observations String?           @db.VarChar(500)
-  client       Member            @relation(fields: [clientId], references: [id])
+  client       Member            @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId     String            @map("member_id")
   service      Service           @relation(fields: [serviceId], references: [id])
   serviceId    String            @map("service_id")
-  owner        User              @relation(fields: [ownerId], references: [id])
+  owner        User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId      String            @map("user_id")
   business     Business          @relation(fields: [businessId], references: [id])
   businessId   String            @map("business_id")
