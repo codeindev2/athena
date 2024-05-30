@@ -1,6 +1,8 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Calendar,
+  CalendarDays,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -13,6 +15,7 @@ import {
   Image,
   Laptop,
   LayoutDashboardIcon,
+  LayoutList,
   Loader2,
   LogIn,
   LucideIcon,
@@ -28,6 +31,7 @@ import {
   User,
   User2Icon,
   UserX2Icon,
+  Users,
   X,
 } from "lucide-react";
 
@@ -60,6 +64,9 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  calendar: CalendarDays,
+  users: Users,
+  services: LayoutList,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

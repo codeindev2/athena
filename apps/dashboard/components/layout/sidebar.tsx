@@ -3,11 +3,8 @@ import { BusinessSelect } from "@/app/(dashboard)/dashboard/_components/select-b
 import { DashboardNav } from "@/components/dashboard-nav";
 import { navItems } from "@/constants/data";
 import { cn } from "@/lib/utils";
-import { useBusiness } from "@/store/business";
 
 export default function Sidebar() {
-  const { business } = useBusiness();
-
   return (
     <nav
       className={cn(`relative hidden h-screen border-r pt-16 lg:block w-72`)}

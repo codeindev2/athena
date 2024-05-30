@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
-import { GET_EMPLOYEES } from "@/constants/function-name";
+import { GET_PRODUCTS } from "@/constants/function-name";
 import { api } from "@/lib/axios";
 import { queryClient } from "@/lib/react-query";
 import { useBusiness } from "@/store/business";
@@ -29,8 +29,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      if (!data.id) throw new Error("Colaborador não encontrado");
-      await api.delete(`business/${business.slug}/member/${data.id}`);
+      if (!data.id) throw new Error("Produto não encontrado");
+      await api.delete(`business/${business.slug}/product/${data.id}`);
       toast({
         variant: "default",
         title: "Sucesso",
@@ -43,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       });
       // usar o queryClient para invalidar a query no cache
       queryClient.invalidateQueries({
-        queryKey: [GET_EMPLOYEES],
+        queryKey: [GET_PRODUCTS],
       });
     } catch (error: any) {
       toast({
@@ -54,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     } finally {
       setLoading(false);
       setOpen(false);
-      router.prefetch("/dashboard/employee");
+      router.prefetch("/dashboard/product");
     }
   };
 
@@ -77,7 +77,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/employee/${data.id}`)}
+            onClick={() => router.push(`/dashboard/product/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>

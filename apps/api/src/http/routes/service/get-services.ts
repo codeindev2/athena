@@ -22,27 +22,41 @@ export async function getServices(app: FastifyInstance) {
           params: z.object({
             slug: z.string(),
           }),
+          querystring: z.object({
+            page: z.coerce.number().default(1),
+            limit: z.coerce.number().default(10),
+            search: z.string().optional(),
+          }),
           response: {
             200: z.object({
-              services: z.array(
-                z.object({
-                  id: z.string().uuid(),
-                  description: z.string(),
-                  name: z.string(),
-                  businessId: z.string().uuid(),
-                  business: z.object({
+              services: z.object({
+                data: z.array(
+                  z.object({
                     id: z.string().uuid(),
-                    name: z.string().nullable(),
-                    avatarUrl: z.string().nullable(),
+                    description: z.string(),
+                    name: z.string(),
+                    businessId: z.string().uuid(),
+                    business: z.object({
+                      id: z.string().uuid(),
+                      name: z.string().nullable(),
+                      avatarUrl: z.string().nullable(),
+                    }),
                   }),
+                ),
+                meta: z.object({
+                  page: z.number(),
+                  limit: z.number(),
+                  total: z.number(),
+                  paginationNext: z.boolean(),
                 }),
-              ),
+              }),
             }),
           },
         },
       },
       async (request, reply) => {
         const { slug } = request.params
+        const { limit, page, search } = request.query
         const userId = await request.getCurrentUserId()
         const { business, membership } = await request.getUserMembership(slug)
 
@@ -55,6 +69,8 @@ export async function getServices(app: FastifyInstance) {
         }
 
         const services = await prisma.service.findMany({
+          take: limit,
+          skip: (page - 1) * limit,
           select: {
             id: true,
             name: true,
@@ -70,10 +86,36 @@ export async function getServices(app: FastifyInstance) {
           },
           where: {
             businessId: business.id,
+            AND: {
+              name: {
+                contains: search,
+              },
+            },
+          },
+          orderBy: {
+            name: 'asc',
           },
         })
 
-        return reply.send({ services })
+        const total = await prisma.service.count({
+          where: {
+            businessId: business.id,
+          },
+        })
+
+        const paginationNext = total > page * limit
+
+        const response = {
+          data: services,
+          meta: {
+            page,
+            limit,
+            total,
+            paginationNext,
+          },
+        }
+
+        return reply.send({ services: response })
       },
     )
 }
