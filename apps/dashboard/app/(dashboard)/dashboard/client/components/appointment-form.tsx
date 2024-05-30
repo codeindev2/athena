@@ -145,7 +145,6 @@ export function AppointmentForm({
       });
     } finally {
       onClose();
-      window.location.reload();
     }
   };
   return (
@@ -299,11 +298,11 @@ export function AppointmentForm({
           </div>
 
           <div className="flex flex-col space-y-2">
-            <Button type="submit" variant="default">
-              Continuar
-            </Button>
             <Button variant="outline" onClick={onClose}>
               Cancelar
+            </Button>
+            <Button type="submit" variant="default">
+              Agendar
             </Button>
           </div>
         </div>
