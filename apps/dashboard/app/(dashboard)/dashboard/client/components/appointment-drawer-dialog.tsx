@@ -12,7 +12,6 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
 
 type AppointmentModalProps = {
   isOpen: boolean;
