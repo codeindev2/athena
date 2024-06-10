@@ -46,7 +46,6 @@ export const listEmployeeAvailableHoursUseCase = async ({
         {
           businessId,
         },
-
         {
           ownerId: userId,
         },

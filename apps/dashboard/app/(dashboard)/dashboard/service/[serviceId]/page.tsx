@@ -19,6 +19,7 @@ export default function Page() {
 
       setMember(response.data.member);
     }
+    4;
   }, [business, param]);
 
   useEffect(() => {

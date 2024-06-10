@@ -20,13 +20,12 @@ export async function fetchAppointmentsAvailableByEmployeeId({
     slug,
 }: AppointmentParams): Promise<AppointmentAvailable[]> {
     const response  = await api.post(`business/${slug}/appointments/available`, {
-    
             userId,
             year,
             month,
             day,
-     
     });
 
+    console.log(response.data);
     return response.data?.appointments as AppointmentAvailable[];   
 }

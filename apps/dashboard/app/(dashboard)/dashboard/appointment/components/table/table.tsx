@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
   };
 }
 
-export function ClientTable<TData, TValue>({
+export function AppointmentTable<TData, TValue>({
   columns,
   data,
   pageNo,
@@ -68,6 +68,9 @@ export function ClientTable<TData, TValue>({
   const per_page = searchParams?.get("limit") ?? "10";
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+
+  /* this can be used to get the selectedrows 
+  console.log("value", table.getFilteredSelectedRowModel()); */
 
   // Create query string
   const createQueryString = React.useCallback(

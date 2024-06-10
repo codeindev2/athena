@@ -19,6 +19,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { useBusiness } from "@/store/business";
 import { useQuery } from "@tanstack/react-query";
+import { RecentAppoitments } from "@/components/recent-appointments";
 
 export async function fetchBusiness() {
   const response = await api.get("/business");
@@ -67,11 +68,17 @@ export default function page() {
           day: new Date().getDate(),
         },
       );
-      setAppointments(appointmentsResponse.data.appointments);
+      setAppointments(appointmentsResponse.data.appointments.data);
     }
   }, [business, session?.user.sub]);
 
-  console.log(appointments);
+  const appointmentsDay = appointments.map((appointment: any) => ({
+    id: appointment.id,
+    name: appointment.client.name,
+    email: appointment.client.email,
+    date: appointment.date,
+    hour: appointment.hour,
+  }));
 
   useEffect(() => {
     fetchClients();
@@ -100,7 +107,7 @@ export default function page() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {appointments.length}
+                    {appointments.length ?? 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Agendamentos do mês
@@ -163,7 +170,7 @@ export default function page() {
                 <CardDescription>Lista de tarefas para o dia</CardDescription>
               </CardHeader>
               <CardContent>
-                <RecentSales />
+                <RecentAppoitments appointments={appointmentsDay} />
               </CardContent>
             </Card>
             {/* </div> */}

@@ -97,6 +97,7 @@ export function AppointmentForm({
       slug: business.slug,
     });
 
+    console.log(response);
     const availables = response.filter((available) => available.available);
     setAvailables(availables);
   };

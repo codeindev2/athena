@@ -16,7 +16,6 @@ export default function Sidebar() {
               {business?.name}
             </h2> */}
             <BusinessSelect />
-
             <DashboardNav items={navItems} />
           </div>
         </div>
