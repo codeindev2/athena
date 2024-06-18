@@ -8,23 +8,22 @@ import { ServiceForm } from "../components/service-form";
 
 export default function Page() {
   const { business } = useBusiness();
-  const [member, setMember] = useState();
-  const { employeeId: param } = useParams();
+  const [service, setService] = useState();
+  const { serviceId: param } = useParams();
 
-  const fetchClients = useCallback(async () => {
+  const getServices = useCallback(async () => {
     if (business.slug && param !== "new") {
       const response = await api.get(
         `business/${business.slug}/service/${param}`,
       );
 
-      setMember(response.data.member);
+      setService(response.data.service);
     }
-    4;
   }, [business, param]);
 
   useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
+    getServices();
+  }, [getServices]);
 
   const breadcrumbItems = [
     { title: "Serviço", link: "/dashboard/service" },
@@ -33,7 +32,7 @@ export default function Page() {
   return (
     <div className="flex-1 space-y-4 p-8">
       <BreadCrumb items={breadcrumbItems} />
-      <ServiceForm initialData={member} title="serviço" />
+      <ServiceForm initialData={service} title="serviço" />
     </div>
   );
 }

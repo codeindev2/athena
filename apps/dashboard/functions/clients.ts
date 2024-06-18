@@ -11,7 +11,7 @@ export async function fetchClients({
     page,
     limit,
     search,
-  }: Params){
+  }: Params): Promise<any>{
     const response = await api.get(
       `business/${slug}/members?page=${page}&limit${limit}&search=${search}`,
     );

@@ -1,9 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { CalendarDateRangePicker } from "@/components/date-range-picker";
-import { Overview } from "@/components/overview";
-import { RecentSales } from "@/components/recent-sales";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -20,15 +16,25 @@ import { api } from "@/lib/axios";
 import { useBusiness } from "@/store/business";
 import { useQuery } from "@tanstack/react-query";
 import { RecentAppoitments } from "@/components/recent-appointments";
+import { format } from "date-fns";
 
-export async function fetchBusiness() {
+async function getBusiness() {
   const response = await api.get("/business");
   return response.data;
 }
 
+type Appointments = {
+  id: string;
+  name: string;
+  email: string;
+  date: string;
+  hour: string;
+};
+
 export default function page() {
   const [clients, setClients] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [appointmentsDay, setAppointmentsDay] = useState<Appointments[]>([]);
   const { business, setBusiness } = useBusiness();
   const { data: session } = useSession();
 
@@ -38,7 +44,7 @@ export default function page() {
 
   const { data: businessData } = useQuery({
     queryKey: ["getBusiness"],
-    queryFn: () => fetchBusiness(),
+    queryFn: () => getBusiness(),
   });
 
   if (businessData && businessData.business!.length && !business.slug) {
@@ -70,15 +76,23 @@ export default function page() {
       );
       setAppointments(appointmentsResponse.data.appointments.data);
     }
-  }, [business, session?.user.sub]);
 
-  const appointmentsDay = appointments.map((appointment: any) => ({
-    id: appointment.id,
-    name: appointment.client.name,
-    email: appointment.client.email,
-    date: appointment.date,
-    hour: appointment.hour,
-  }));
+    appointments.forEach((appointment: any) => {
+      const dateCurrent = format(new Date(), "dd/MM/yyyy");
+      console.log(dateCurrent, appointment.date);
+      if (appointment.date === dateCurrent) {
+        setAppointmentsDay([
+          {
+            id: appointment.id,
+            name: appointment.client.name,
+            email: appointment.client.email,
+            date: appointment.date,
+            hour: appointment.hour,
+          },
+        ]);
+      }
+    });
+  }, [business, session]);
 
   useEffect(() => {
     fetchClients();

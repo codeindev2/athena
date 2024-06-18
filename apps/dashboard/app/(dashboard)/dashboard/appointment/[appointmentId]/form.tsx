@@ -27,7 +27,11 @@ import {
   fetchAppointmentsAvailableByEmployeeId,
 } from "@/functions/appointment";
 import { fetchServices } from "@/functions/services";
-import { GET_EMPLOYEES, GET_SERVICES } from "@/constants/function-name";
+import {
+  GET_CLIENTS,
+  GET_EMPLOYEES,
+  GET_SERVICES,
+} from "@/constants/function-name";
 import { fetchEmployees } from "@/functions/employees";
 import { addHours, format, parseISO, set, startOfHour } from "date-fns";
 import { api } from "@/lib/axios";
@@ -38,34 +42,54 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import ptBR from "date-fns/locale/pt-BR";
 import { useQuery } from "@tanstack/react-query";
+import { fetchClients } from "@/functions/clients";
+import { Heading } from "@/components/ui/heading";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   serviceId: z.string().min(3, { message: "Serviço é obrigatório" }),
   ownerId: z.string(),
   date: z.date(),
   hour: z.string(),
+  clientId: z.string(),
 });
 
 type ServiceForm = z.infer<typeof formSchema>;
 
+type paramsProps = {
+  searchParams: {
+    [key: string]: string | string[] | undefined;
+  };
+};
+
 type AppointmentFormParam = {
-  className?: string;
-  isOpen: boolean;
-  onClose: () => void;
-  clientId: string;
+  initialData?: any;
+  searchParams: any;
 };
 
 export function AppointmentForm({
-  className,
-  onClose,
-  isOpen,
-  clientId,
+  initialData,
+  searchParams,
 }: AppointmentFormParam) {
   const { business } = useBusiness();
   const [employee, setEmployee] = React.useState("");
   const [availables, setAvailables] = React.useState<AppointmentAvailable[]>(
     [],
   );
+
+  const title = initialData ? `Editar agenda` : `Cadastro de agenda`;
+  const description = initialData ? title : `Formulário de agendamento`;
+
+  const page = Number(searchParams?.page) || 1;
+  const pageLimit = Number(searchParams?.limit) || 10;
+  const search = searchParams?.search ? searchParams?.search.toString() : "";
+
+  const { data: clients } = useQuery({
+    queryKey: [GET_CLIENTS, business.slug, page, pageLimit, search],
+    queryFn: () =>
+      fetchClients({ slug: business.slug, page, limit: pageLimit, search }),
+  });
+
   const { data: services } = useQuery({
     queryKey: [GET_SERVICES, business.slug],
     queryFn: () => fetchServices({ slug: business.slug }),
@@ -97,7 +121,6 @@ export function AppointmentForm({
       slug: business.slug,
     });
 
-    console.log(response);
     const availables = response.filter((available) => available.available);
     setAvailables(availables);
   };
@@ -112,7 +135,7 @@ export function AppointmentForm({
       serviceId: data.serviceId,
       date: data.date,
       businessId: business.id,
-      clientId,
+      clientId: data.clientId,
     };
 
     // monta data e hora do agendamento
@@ -145,92 +168,131 @@ export function AppointmentForm({
         description: `${error?.response.data.message}`,
       });
     } finally {
-      onClose();
     }
   };
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleOnSubmit)}
-        className={cn(className)}
-      >
-        <div className="space-y-2">
-          <FormField
-            control={form.control}
-            name="serviceId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Serviço</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field?.value}
-                  defaultValue={field?.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        defaultValue={field.value}
-                        placeholder="Selecione uma serviço"
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {services?.map((service) => (
-                      <SelectItem key={service.id} value={String(service.id)}>
-                        {service.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="ownerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Colaborador(a)</FormLabel>
-                <Select
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    setEmployee(value);
-                  }}
-                  value={field?.value}
-                  defaultValue={field?.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        defaultValue={field.value}
-                        placeholder="Selecione um colaborador(a)"
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {employees?.map((employee: any) => (
-                      <SelectItem
-                        key={employee.id}
-                        value={String(employee.ownerId)}
-                      >
-                        {employee.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex flex-col">
+    <>
+      <div className="flex items-center justify-between">
+        <Heading title={title} description={description} />
+      </div>
+      <Separator />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleOnSubmit)}
+          className="space-y-2 w-full"
+        >
+          <div className="md:grid md:grid-cols-2 gap-2">
+            <FormField
+              control={form.control}
+              name="clientId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cliente</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      value;
+                    }}
+                    value={field?.value}
+                    defaultValue={field?.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Selecione"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {clients?.members?.data.map((client: any) => (
+                        <SelectItem key={client.id} value={String(client.id)}>
+                          {client.user.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="serviceId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Serviço</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field?.value}
+                    defaultValue={field?.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Selecione uma serviço"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {services?.map((service) => (
+                        <SelectItem key={service.id} value={String(service.id)}>
+                          {service.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="w-full md:grid md:grid-cols-3 gap-3">
+            <FormField
+              control={form.control}
+              name="ownerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Colaborador(a)</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setEmployee(value);
+                    }}
+                    value={field?.value}
+                    defaultValue={field?.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Selecione um colaborador(a)"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {employees?.map((employee: any) => (
+                        <SelectItem
+                          key={employee.id}
+                          value={String(employee.ownerId)}
+                        >
+                          {employee.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
-                <FormItem className="flex flex-col pt-1">
+                <FormItem className="flex flex-col pt-2">
                   <FormLabel>Dia</FormLabel>
-                  <Popover modal={isOpen}>
+                  <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -297,17 +359,14 @@ export function AppointmentForm({
               )}
             />
           </div>
-
-          <div className="flex flex-col space-y-2">
-            <Button variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
+          <div className="flex flex-1  space-x-1">
             <Button type="submit" variant="default">
-              Agendar
+              Salvar
             </Button>
+            <Button variant="destructive">Cancelar</Button>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </>
   );
 }

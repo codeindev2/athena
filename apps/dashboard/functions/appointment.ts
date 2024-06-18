@@ -5,6 +5,13 @@ export type AppointmentAvailable = {
    available: boolean;
 }
 
+type QueryParams = {
+    slug: string;
+    page: number;
+    limit: number;
+    search?: string;
+    };
+
 export type AppointmentParams = {
     userId: string;
     year: number;
@@ -26,6 +33,31 @@ export async function fetchAppointmentsAvailableByEmployeeId({
             day,
     });
 
-    console.log(response.data);
     return response.data?.appointments as AppointmentAvailable[];   
+}
+
+export async function listAppointments({
+    slug,
+    page,
+    limit,
+    search,
+}: QueryParams): Promise<any> {
+    const response = await api.get(
+        `business/${slug}/appointments?page=${page}&limit${limit}&search=${search}`,
+      );
+      const result = response.data as any; 
+
+    return result;
+}
+
+export async function getAppointment({
+    slug,
+    appointmentId,
+}: any): Promise<any> {
+    const response = await api.get(
+        `business/${slug}/appointment/${appointmentId}`,
+      );
+      const result = response.data?.appointment; 
+
+    return result;
 }

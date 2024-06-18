@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import useMediaQuery from "@/hooks/useMediaQuery";
-import { AppointmentForm } from "./appointment-form";
 import { Modal } from "@/components/ui/modal";
 import {
   Drawer,
@@ -12,6 +11,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+import { AppointmentForm } from "@/components/forms/appointment-form";
 
 type AppointmentModalProps = {
   isOpen: boolean;

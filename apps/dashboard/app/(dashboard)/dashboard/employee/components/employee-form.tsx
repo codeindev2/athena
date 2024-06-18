@@ -26,6 +26,7 @@ const formSchema = z.object({
   email: z.string().email({ message: "Por favor entre co email válido" }),
   phone: z.string().optional(),
   address: z.string().optional(),
+  password: z.string().min(6, { message: "Senha é obrigatória" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -179,7 +180,21 @@ export const EmployeeForm: React.FC<MemberFormProps> = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
+          <div></div>
 
           <div className="flex align-items justify-end">
             <Button className="mb-2" type="submit">

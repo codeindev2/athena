@@ -67,8 +67,7 @@ export const ServiceForm: React.FC<MemberFormProps> = ({
       setLoading(true);
       if (initialData) {
         await api.patch(
-          `/business/${business.slug}/service
-        /${initialData.id}`,
+          `/business/${business.slug}/service/${initialData.id}`,
           {
             ...data,
           },

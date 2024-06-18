@@ -4,35 +4,41 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useBusiness } from "@/store/business";
 import { api } from "@/lib/axios";
 import { useParams } from "next/navigation";
-import { ProductForm } from "../components/product-form";
+import { AppointmentForm } from "./form";
+type paramsProps = {
+  searchParams: {
+    [key: string]: string | string[] | undefined;
+  };
+};
 
-export default function Page() {
+export default function Page({ searchParams }: paramsProps) {
   const { business } = useBusiness();
   const [member, setMember] = useState();
-  const { employeeId: param } = useParams();
+  const { appointmentId: param } = useParams();
 
   const fetchClients = useCallback(async () => {
-    if (business.slug && param !== "new") {
+    if (business.slug && param !== "new" && !param) {
       const response = await api.get(
-        `business/${business.slug}/member/${param}`,
+        `business/${business.slug}/appointment/${param}`,
       );
 
       setMember(response.data.member);
     }
   }, [business, param]);
+  2;
 
   useEffect(() => {
     fetchClients();
   }, [fetchClients]);
 
   const breadcrumbItems = [
-    { title: "Colaborador(a)", link: "/dashboard/employee" },
-    { title: "Cadastro", link: "/dashboard/employee/new" },
+    { title: "Agendamentos", link: "/dashboard/appointment" },
+    { title: "Cadastro", link: "/dashboard/appointment/new" },
   ];
   return (
     <div className="flex-1 space-y-4 p-8">
       <BreadCrumb items={breadcrumbItems} />
-      <ProductForm initialData={member} title="colaborador(a)" />
+      <AppointmentForm initialData={member} searchParams={searchParams} />
     </div>
   );
 }
