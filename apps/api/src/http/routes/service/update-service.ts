@@ -22,7 +22,7 @@ export async function updateService(app: FastifyInstance) {
           security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string(),
-            description: z.string(),
+            description: z.string().optional(),
           }),
           params: z.object({
             slug: z.string(),
@@ -38,14 +38,14 @@ export async function updateService(app: FastifyInstance) {
         const userId = await request.getCurrentUserId()
         const { business, membership } = await request.getUserMembership(slug)
 
-        const product = await prisma.product.findUnique({
+        const service = await prisma.service.findUnique({
           where: {
             id: serviceId,
             businessId: business.id,
           },
         })
 
-        if (!product) {
+        if (!service) {
           throw new BadRequestError('Service not found.')
         }
 
@@ -60,7 +60,7 @@ export async function updateService(app: FastifyInstance) {
 
         const { name, description } = request.body
 
-        await prisma.product.update({
+        await prisma.service.update({
           where: {
             id: serviceId,
           },

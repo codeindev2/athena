@@ -13,8 +13,10 @@ import {
 
 import { errorHandler } from './error-handler'
 import { createAppointment } from './routes/appointment/create-appointment'
-import { listAppointments } from './routes/appointment/list-appointments'
+import { getAppointment } from './routes/appointment/get-appointment'
+import { getListAppointments } from './routes/appointment/get-list-appointments'
 import { listEmployeeAvailableHours } from './routes/appointment/list-employee-day-available-hours'
+import { listAppointments } from './routes/appointment/post-list-appointments'
 import { authenticateWithGithub } from './routes/auth/authenticate-with-github'
 import { authenticateWithPassword } from './routes/auth/authenticate-with-password'
 import { createAccount } from './routes/auth/create-account'
@@ -125,7 +127,9 @@ app.register(updateMember)
 // Agendamentos
 app.register(createAppointment)
 app.register(listAppointments)
+app.register(getListAppointments)
 app.register(listEmployeeAvailableHours)
+app.register(getAppointment)
 
 // Inicialização do servidor
 app.listen({ port: env.SERVER_PORT }).then(() => {

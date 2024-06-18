@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "apps/api/src/server.ts",
+        "use": "@now/node-server"
+      },
+      {
+        "src": "apps/dashboard/.next",
+        "use": "@now/static"
+      }
+    ]
+}
